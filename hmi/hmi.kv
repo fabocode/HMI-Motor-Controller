@@ -12,5 +12,125 @@ WindowManager:
             pos: self.pos
             size: self.size
     name: "main"
-    Label:
-        text: "Hello motor control"
+    BoxLayout:
+        orientation: "horizontal"
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                id: time_label
+                text: "[b]{}[/b]".format("00:00:00")
+                font_size: 80
+                markup: True
+            BoxLayout:
+                orientation: "horizontal"
+                BoxLayout:
+                    orientation: "vertical"
+                    Button:
+                        id: rpm_set_point_button_id
+                        text: "rpm set point"
+                    Button:
+                        id: rpm_set_point_button_id
+                        text: "Jog (rotate motor manually)"
+                    Button:
+                        id: recording_data_button_id
+                        text: "recording data"
+                BoxLayout:
+                    orientation: "vertical"
+                    Label:
+                        id: start_time_label_id
+                        text: "input for rpm"
+                        font_size: 50
+                        markup: True
+                    Label:
+                        id: start_time_label_id
+                        text: "start time stamp"
+                        font_size: 50
+                        markup: True
+                    Label:
+                        id: start_time_label_id
+                        text: "stop time stamp"
+                        font_size: 50
+                        markup: True
+
+            Label:
+                text: "[b]{}[/b]".format("status bar")
+                markup: True
+                font_size: 80
+                color: 0,0,0,1
+                canvas.before:
+                    Color:
+
+                        rgba: 0,1,0,1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+            Button:
+                text: "[b]{}[/b]".format("STOP")
+                font_size: 80
+                color: 0,0,0,1
+                background_normal: ""
+                background_color: 1,0,0,1
+                markup: True
+        BoxLayout:
+            orientation: "vertical"
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]{}[/b]".format("Test Name: ")
+                    markup: True
+                    font_size: 50
+                Label:
+                    text: "[b]{}[/b]".format("user input")
+                    markup: True
+                    font_size: 50
+                Label:
+                    text: "[b]{}[/b]".format("MM/DD/YY")
+                    markup: True
+                    font_size: 30
+
+            TextInput:
+                text: "{}".format("Notes")
+                markup: True
+                font_size: 80
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]TORQUE (Nm)[/b]"
+                    font_size: 50
+                    markup: True
+                Label:
+                    text: "[b]123[/b]"
+                    font_size: 50
+                    markup: True
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]Calculated Blade \nTip Velocity[/b]"
+                    font_size: 50
+                    markup: True
+                    halign: "center"
+                    valign: "middle"
+                Label:
+                    text: "[b]123[/b]"
+                    font_size: 50
+                    markup: True
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]Total Revolutions[/b]"
+                    font_size: 50
+                    markup: True
+                Label:
+                    text: "[b]123[/b]"
+                    font_size: 50
+                    markup: True
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]Current RPM[/b]"
+                    font_size: 50
+                    markup: True
+                Label:
+                    text: "[b]123[/b]"
+                    font_size: 50
+                    markup: True
