@@ -1,0 +1,16 @@
+#:import hex kivy.utils.get_color_from_hex
+
+WindowManager:
+    Main:
+
+<Main>:
+    canvas.before:
+        Color:
+
+            rgba: 0,0,0,0
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    name: "main"
+    Label:
+        text: "Hello motor control"
