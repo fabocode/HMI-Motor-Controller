@@ -27,29 +27,35 @@ WindowManager:
                     orientation: "vertical"
                     Button:
                         id: rpm_set_point_button_id
-                        text: "rpm set point"
+                        text: "[b]rpm set point[/b]"
+                        font_size: 30
+                        markup: True
                     Button:
                         id: rpm_set_point_button_id
-                        text: "Jog (rotate motor manually)"
+                        text: "[b]Jog (rotate motor)[/b]"
+                        font_size: 30
+                        markup: True
                     Button:
                         id: recording_data_button_id
-                        text: "recording data"
+                        text: "[b]recording data[/b]"
+                        font_size: 30
+                        markup: True
                 BoxLayout:
                     orientation: "vertical"
                     Label:
                         id: start_time_label_id
-                        text: "input for rpm"
-                        font_size: 50
+                        text: "[b]input for rpm[/b]"
+                        font_size: 35
                         markup: True
                     Label:
                         id: start_time_label_id
-                        text: "start time stamp"
-                        font_size: 50
+                        text: "[b]start time stamp[/b]"
+                        font_size: 35
                         markup: True
                     Label:
                         id: start_time_label_id
-                        text: "stop time stamp"
-                        font_size: 50
+                        text: "[b]stop time stamp[/b]"
+                        font_size: 35
                         markup: True
 
             Label:
@@ -78,25 +84,25 @@ WindowManager:
                 Label:
                     text: "[b]{}[/b]".format("Test Name: ")
                     markup: True
-                    font_size: 50
+                    font_size: 30
                 Label:
                     text: "[b]{}[/b]".format("user input")
                     markup: True
-                    font_size: 50
+                    font_size: 30
                 Label:
                     text: "[b]{}[/b]".format(root.date_str)
                     markup: True
-                    font_size: 40
+                    font_size: 30
 
             TextInput:
                 text: "{}".format("Notes")
                 markup: True
-                font_size: 80
+                font_size: 40
             BoxLayout:
                 orientation: "horizontal"
                 Label:
                     text: "[b]TORQUE (Nm)[/b]"
-                    font_size: 50
+                    font_size: 30
                     markup: True
                 Label:
                     text: "[b]123[/b]"
@@ -107,7 +113,7 @@ WindowManager:
                 Label:
                     text: "[b]Calculated Blade \nTip Velocity[/b]"
                     text_size: self.size
-                    font_size: 50
+                    font_size: 30
                     markup: True
                     halign: "center"
                     valign: "middle"
@@ -119,7 +125,7 @@ WindowManager:
                 orientation: "horizontal"
                 Label:
                     text: "[b]Total Revolutions[/b]"
-                    font_size: 50
+                    font_size: 30
                     markup: True
                 Label:
                     text: "[b]123[/b]"
@@ -129,7 +135,7 @@ WindowManager:
                 orientation: "horizontal"
                 Label:
                     text: "[b]Current RPM[/b]"
-                    font_size: 50
+                    font_size: 30
                     markup: True
                 Label:
                     text: "[b]123[/b]"
