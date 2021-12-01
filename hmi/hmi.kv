@@ -84,9 +84,9 @@ WindowManager:
                     markup: True
                     font_size: 50
                 Label:
-                    text: "[b]{}[/b]".format("MM/DD/YY")
+                    text: "[b]{}[/b]".format(root.date_str)
                     markup: True
-                    font_size: 30
+                    font_size: 40
 
             TextInput:
                 text: "{}".format("Notes")
@@ -106,6 +106,7 @@ WindowManager:
                 orientation: "horizontal"
                 Label:
                     text: "[b]Calculated Blade \nTip Velocity[/b]"
+                    text_size: self.size
                     font_size: 50
                     markup: True
                     halign: "center"

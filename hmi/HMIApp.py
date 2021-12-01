@@ -8,6 +8,7 @@ from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.config import Config
 from screeninfo import get_monitors
+from datetime import date 
 from HMIConfig import HMI_Config
 
 # load the configuration file
@@ -22,7 +23,14 @@ Config.set('graphics', 'height', screen_height)
 
 # main screen
 class Main(Screen):
-    pass
+    date_str = StringProperty('')
+
+    def __init__(self, **kwargs):
+        super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
+        Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
+
+    def update_callback(self, dt):
+        self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
 # screen manager
 class WindowManager(ScreenManager):
