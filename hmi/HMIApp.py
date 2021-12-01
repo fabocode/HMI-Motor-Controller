@@ -13,9 +13,7 @@ from HMIConfig import HMI_Config
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
-
-# get the current screen size
-screen_width = str(int(get_monitors()[0].width  * config.get_screen_fixed_size()))
+screen_width = str(int(get_monitors()[0].width  * config.get_screen_fixed_size()))  # get the current screen size
 screen_height = str(int(get_monitors()[0].height * config.get_screen_fixed_size()))
 # set the screen size
 Config.set('graphics', 'width', screen_width)
