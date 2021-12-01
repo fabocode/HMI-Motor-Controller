@@ -15,7 +15,6 @@ from HMIConfig import HMI_Config
 config = HMI_Config('config/hmi.yaml')
 screen_width = str(int(get_monitors()[0].width  * config.get_screen_fixed_size()))  # get the current screen size
 screen_height = str(int(get_monitors()[0].height * config.get_screen_fixed_size()))
-# set the screen size
 Config.set('graphics', 'width', screen_width)
 Config.set('graphics', 'height', screen_height)    
 Config.set('kivy', 'keyboard_mode', 'systemanddock')    # enable virtual keyboard on text input
