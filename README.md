@@ -2,5 +2,5 @@
  HMI Motor Controller
 
 # Requirements
-- ADC enabled
-- 
+- ADC Enabled
+- 1280x720 Window Resolution

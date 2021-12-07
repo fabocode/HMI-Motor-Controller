@@ -4,6 +4,7 @@ WindowManager:
     Main:
 
 <Main>:
+    test_name_text_input: test_name_id
     canvas.before:
         Color:
 
@@ -18,7 +19,7 @@ WindowManager:
             orientation: "vertical"
             Label:
                 id: time_label
-                text: "[b]{}[/b]".format("00:00:00")
+                text: "[b]{}[/b]".format(root.timestamp_str)
                 font_size: 80
                 markup: True
             BoxLayout:
@@ -57,36 +58,45 @@ WindowManager:
                         text: "[b]stop time stamp[/b]"
                         font_size: 35
                         markup: True
+                        
 
             Label:
-                text: "[b]{}[/b]".format("status bar")
+                text: "[b]{}[/b]".format(root.status_bar_str)
                 markup: True
                 font_size: 80
-                color: 0,0,0,1
+                color: 1,1,1,1
                 canvas.before:
                     Color:
 
-                        rgba: 0,1,0,1
+                        rgba: 0,0,0,1
                     Rectangle:
                         pos: self.pos
                         size: self.size
             Button:
-                text: "[b]{}[/b]".format("STOP")
+                id: run_button_id
+                text: "[b]{}[/b]".format(root.run_button_str)
                 font_size: 80
                 color: 0,0,0,1
                 background_normal: ""
                 background_color: 1,0,0,1
                 markup: True
+                on_release: root.run_button_pressed()
         BoxLayout:
             orientation: "vertical"
             BoxLayout:
                 orientation: "horizontal"
-                Label:
-                    text: "[b]{}[/b]".format("Test Name: ")
+                TextInput:
+                    id: test_name_id
+                    hint_text: "Test Name: "
+                    multiline: False
                     markup: True
                     font_size: 30
+                    halign: "center"
+                    padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
+                    on_focus: self.text = "" if self.focus else "{}".format(self.text)
+                    on_text_validate: root.on_test_name_evt(self.text)
                 Label:
-                    text: "[b]{}[/b]".format("user input")
+                    text: "[b]{}[/b]".format(root.test_name_str)
                     markup: True
                     font_size: 30
                 Label:
@@ -95,9 +105,10 @@ WindowManager:
                     font_size: 30
 
             TextInput:
-                text: "{}".format("Notes")
+                hint_text: "Notes"
                 markup: True
                 font_size: 40
+                on_focus: self.text = "" if self.focus else "{}".format(self.text)
             BoxLayout:
                 orientation: "horizontal"
                 Label:
