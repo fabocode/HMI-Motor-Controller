@@ -34,7 +34,7 @@ class Main(Screen):
     def __init__(self, **kwargs):
         super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
         self.system_status  = False
-        self.run_button_str = "STOP"
+        self.run_button_str = "START"
         self.date_str       = str(date.today().strftime("%d/%m/%y"))  # update the date string
         self.status_bar_str = "STOPPED"
         self.test_name_str  = "Test Name"
@@ -75,11 +75,11 @@ class Main(Screen):
     def run_button_pressed(self):
         self.system_status = not self.system_status
         if self.system_status:
-            self.run_button_str = 'START'
-            self.ids['run_button_id'].background_color = [0, 1, 0, 1]
-        else:
             self.run_button_str = 'STOP'
             self.ids['run_button_id'].background_color = [1, 0, 0, 1]
+        else:
+            self.run_button_str = 'START'
+            self.ids['run_button_id'].background_color = [0, 1, 0, 1]
         
 
 # screen manager
