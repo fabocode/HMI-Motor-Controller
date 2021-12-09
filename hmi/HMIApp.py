@@ -58,10 +58,10 @@ class Main(Screen):
 
     # Utils functions
     def get_date(self):
-        return str(date.today().strftime("%d/%m/%y"))
+        return str(date.today().strftime("%m/%d/%y"))
 
     def get_time(self):
-        return str(datetime.now().strftime("%H:%M:%S - %d/%m/%y"))
+        return str(datetime.now().strftime("%H:%M:%S - %m/%d/%y"))
     
     def get_elapsed_time(self):
         return str(time.strftime("%H:%M:%S", time.gmtime(self.start - self.end))	)
