@@ -36,16 +36,17 @@ class Main(Screen):
 
     def __init__(self, **kwargs):
         super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
-        self.system_status  = False
-        self.run_button_str = "START"
-        self.date_str       = self.get_date()  # update the date string
-        self.status_bar_str = "STOPPED"
-        self.test_name_str  = "Test Name"
-        self.timestamp_str  = str("00:00:00")
-        self.start = timer()
-        self.end = timer()
-        self.excel = excel # create an instance of the excel module to save the data
-        self.torque_sensor = Torque_Sensor(0,0) # create an instance of the torque sensor (address 0, channel 0)
+        self.system_status      = False
+        self.run_button_str     = "START"
+        self.date_str           = self.get_date()  # update the date string
+        self.status_bar_str     = "STOPPED"
+        self.test_name_str      = "Test Name"
+        self.timestamp_str      = str("00:00:00")
+        self.torque_sensor_str  = "0.00"
+        self.start              = timer()
+        self.end                = timer()
+        self.excel              = excel # create an instance of the excel module to save the data
+        self.torque_sensor      = Torque_Sensor(0,0) # create an instance of the torque sensor (address 0, channel 0)
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
