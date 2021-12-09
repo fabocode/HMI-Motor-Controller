@@ -1,4 +1,5 @@
-import yaml, pathlib
+import yaml
+from pathlib import Path
 
 class HMI_Config:
     def __init__(self, path):
@@ -12,7 +13,7 @@ class HMI_Config:
 
     @staticmethod
     def get_path_to_save(filename):
-        return str(pathlib.Path(__file__).parent.absolute().parent.absolute().parent.absolute().parent.absolute()) + '/Desktop/' + filename 
+        return str(Path.home()) + '/Desktop/' + filename 
 
 if __name__ == '__main__':
     # path = pathlib.Path(__file__).parent.absolute() / 'config.yaml'
