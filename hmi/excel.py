@@ -30,10 +30,8 @@ def save_data(data, filename):
     worksheet.write('G1', 'Blade Tip Velocity', header_format)
 
     # write data dictionary into excel 
-    # dict = {'Name': '', 'Start Time': '', 'Stop Time': '', 'Elapsed Time': '', 'Time Stamps': '', 'RPM': '', 'Torque': '', 'Blade Tip Velocity': ''}
     row = 1
     col = 0
-    
     # write each value tuple index into excel
     for key, value in data.items():
         for i in range(len(value)):
@@ -44,10 +42,6 @@ def save_data(data, filename):
             
         row = 1
         col += 1
-    
-
-    
-    print(f"save data here {data}")
 
     workbook.close()
     

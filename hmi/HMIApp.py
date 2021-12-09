@@ -12,6 +12,7 @@ from screeninfo import get_monitors
 from datetime import date, datetime
 from timeit import default_timer as timer
 from HMIConfig import HMI_Config
+from sensors.torque import Torque_Sensor
 import time
 import excel
 
@@ -30,6 +31,7 @@ class Main(Screen):
     status_bar_str    = StringProperty('')
     test_name_str     = StringProperty('')
     timestamp_str     = StringProperty('')
+    torque_sensor_str = StringProperty('')
     run_button_color  = ListProperty([1, 1, 1, 1])
 
     def __init__(self, **kwargs):
@@ -43,18 +45,12 @@ class Main(Screen):
         self.start = timer()
         self.end = timer()
         self.excel = excel # create an instance of the excel module to save the data
-        Clock.schedule_interval(self.update_callback, 0.5)    # setup periodic task
+        self.torque_sensor = Torque_Sensor(0,0) # create an instance of the torque sensor (address 0, channel 0)
+        Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
+        self.counter = 0
 
-        self.data = {   # create a dictionary to store the data
-            'Start Time': (),
-            'Stop Time': (),
-            'Elapsed Time': (),
-            'Time Stamps': (),
-            'RPM': (),
-            'Torque': (),
-            'Blade Tip Velocity': ()
-        }
+        self.data = self.clear_data()
 
     # Utils functions
     def get_date(self):
@@ -85,14 +81,19 @@ class Main(Screen):
 
     def clear_data(self):
         self.data = {   # create a dictionary to store the data
-            'Start Time': (),
-            'Stop Time': (),
-            'Elapsed Time': (),
-            'Time Stamps': (),
-            'RPM': (),
-            'Torque': (),
-            'Blade Tip Velocity': ()
+            'Start Time': [],
+            'Stop Time': [],
+            'Elapsed Time': [],
+            'Time Stamps': [],
+            'RPM': [],
+            'Torque': [],
+            'Blade Tip Velocity': []
         }
+        return self.data 
+
+    def add_data(self, data, label):
+        if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
+            self.data[label].append(data)
 
     def run_button_pressed(self):
         self.system_status = not self.system_status
@@ -100,34 +101,35 @@ class Main(Screen):
             self.run_button_str = 'STOP'
             self.ids['run_button_id'].background_color = [1, 0, 0, 1]
 
-            self.data['Start Time'] += (self.get_time(),)
+            # self.data['Start Time'].append(self.get_time())
+            self.add_data(self.get_time(), 'Start Time')
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
                 self.excel.save_data(self.data, self.test_name_str)
                 # save data into excel file 
                 print("saving data into excel file ")
-                self.excel.save_data(self.data, self.test_name_str)
-                self.clear_data()
+                self.add_data(self.get_time(), 'Stop Time')
+                filename = config.get_path_to_save(self.test_name_str)
+                self.excel.save_data(self.data, filename)
+                self.data = self.clear_data()
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
-            self.data['Stop Time'] += (self.get_time(),)
+            # self.data['Stop Time'].append(self.get_time())
     
     # Callback functions for the periodic task
 
     def update_callback(self, dt):
-    
         self.control_status_bar()   # update the status bar
+        torque_data = self.torque_sensor.get_data()
         if self.is_system_running():    # if system is running and no faults are detected
             self.timestamp_str = self.get_elapsed_time()    # update the timestamp string
-
-            # self.data['Start Time'].append(self.get_time())
-            # self.data['Stop Time'] = self.get_time()
-            self.data['Elapsed Time'] += (self.get_elapsed_time(),)
-            self.data['Time Stamps'] += (self.get_time(),)
-            self.data['RPM'] += (0,)
-            self.data['Torque'] += (0,)
-            self.data['Blade Tip Velocity'] += (0,)
+            self.torque_sensor_str = str(torque_data)
+            self.data['Elapsed Time'].append(self.get_elapsed_time())
+            self.data['Time Stamps'].append(self.get_time())
+            self.data['RPM'].append(0)
+            self.data['Torque'].append(torque_data)
+            self.data['Blade Tip Velocity'].append(0)
 
     # callback function for the date update    
     def update_callback_date(self, dt):

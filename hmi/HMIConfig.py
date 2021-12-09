@@ -1,4 +1,4 @@
-import yaml
+import yaml, pathlib
 
 class HMI_Config:
     def __init__(self, path):
@@ -10,3 +10,14 @@ class HMI_Config:
     def get_screen_fixed_size(self):
         return self.screen_fixed_size
 
+    @staticmethod
+    def get_path_to_save(filename):
+        return str(pathlib.Path(__file__).parent.absolute().parent.absolute().parent.absolute().parent.absolute()) + '/Desktop/' + filename 
+
+if __name__ == '__main__':
+    # path = pathlib.Path(__file__).parent.absolute() / 'config.yaml'
+    # hmi_config = HMI_Config(path)
+    # print(hmi_config.get_screen_fixed_size())
+    print(HMI_Config.get_path_to_save())
+    
+    print(f"{'/home/pi/Desktop/'} { '/home/pi/Desktop/' == HMI_Config.get_path_to_save()} {HMI_Config.get_path_to_save()}")
