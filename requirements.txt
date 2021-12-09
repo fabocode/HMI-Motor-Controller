@@ -12,3 +12,4 @@ PyYAML==6.0
 requests==2.26.0
 screeninfo==0.7
 urllib3==1.26.7
+XlsxWriter==3.0.2
