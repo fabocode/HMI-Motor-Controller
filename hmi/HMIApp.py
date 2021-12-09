@@ -121,7 +121,7 @@ class Main(Screen):
 
     def update_callback(self, dt):
         self.control_status_bar()   # update the status bar
-        torque_data = self.torque_sensor.get_data()
+        torque_data = self.torque_sensor.get_torque()
         if self.is_system_running():    # if system is running and no faults are detected
             self.timestamp_str = self.get_elapsed_time()    # update the timestamp string
             self.torque_sensor_str = str(torque_data)
