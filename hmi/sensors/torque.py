@@ -7,7 +7,9 @@ class Torque_Sensor:
         self.addr = addr
         self.channel = channel
     
-    def get_torque(self):
-        Nm = round(DAQC2.getADC(self.addr, self.channel) * 0.05, 2)
-        return Nm
-
+    def get_torque(self) -> float:
+        try:
+            Nm = round(DAQC2.getADC(self.addr, self.channel) * 0.05, 2)
+            return Nm
+        except:
+            return 0.0

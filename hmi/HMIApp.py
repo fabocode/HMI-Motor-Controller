@@ -15,6 +15,7 @@ from HMIConfig import HMI_Config
 from sensors.torque import Torque_Sensor
 import time
 import excel
+import re
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
@@ -53,6 +54,10 @@ class Main(Screen):
 
         self.data = self.clear_data()
 
+    def validate_name(self, filename):
+        filename = re.sub(r'[^\w\s-]', '', filename.lower())
+        return re.sub(r'[-\s]+', '-', filename).strip('-_')
+
     # Utils functions
     def get_date(self):
         return str(date.today().strftime("%m/%d/%y"))
@@ -77,10 +82,12 @@ class Main(Screen):
             self.start = timer()
 
     def on_test_name_evt(self, text_input):
-        print(f"text included - {text_input}")
-        self.test_name_str = text_input
+        ''' Event handler for the test name input field '''
+        self.test_name_str = self.validate_name(text_input)
+        print(f"text included - {self.test_name_str}")
 
     def clear_data(self):
+        ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
             'Start Time': [],
             'Stop Time': [],
