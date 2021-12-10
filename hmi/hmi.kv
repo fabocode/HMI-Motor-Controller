@@ -90,7 +90,7 @@ WindowManager:
                     hint_text: "Input \nTest Name"
                     multiline: False
                     markup: True
-                    font_size: 20
+                    font_size: 25
                     halign: "center"
                     padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
                     on_focus: self.text = "" if self.focus else "{}".format(self.text)
@@ -98,11 +98,11 @@ WindowManager:
                 Label:
                     text: "[b]{}[/b]".format(root.test_name_str)
                     markup: True
-                    font_size: 20
+                    font_size: 15
                 Label:
                     text: "[b]{}[/b]".format(root.date_str)
                     markup: True
-                    font_size: 20
+                    font_size: 15
 
             TextInput:
                 hint_text: "Notes"
