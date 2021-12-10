@@ -43,11 +43,18 @@ WindowManager:
                         markup: True
                 BoxLayout:
                     orientation: "vertical"
-                    Label:
-                        id: start_time_label_id
-                        text: "[b]input for rpm[/b]"
-                        font_size: 35
-                        markup: True
+                    BoxLayout:
+                        orientation: "vertical"
+                        Label:
+                            id: start_time_label_id
+                            text: "[b]input for rpm[/b]"
+                            font_size: 15
+                            markup: True
+                        Label:
+                            id: start_time_label_id
+                            text: "[b]input for rpm[/b]"
+                            font_size: 35
+                            markup: True
                     Label:
                         id: start_time_label_id
                         text: "[b]{}[/b]".format(root.start_time_str)
