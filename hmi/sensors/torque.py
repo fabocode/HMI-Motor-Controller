@@ -9,7 +9,7 @@ class Torque_Sensor:
     
     def get_torque(self) -> float:
         try:
-            Nm = round(DAQC2.getADC(self.addr, self.channel) * 0.05, 2)
+            Nm = abs(round(DAQC2.getADC(self.addr, self.channel) * 0.05, 4))
             return Nm
         except:
             print("Error: Torque sensor not connected")
