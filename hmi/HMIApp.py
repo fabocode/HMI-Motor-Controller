@@ -46,6 +46,8 @@ class Main(Screen):
         self.test_name_str      = "Test Name"
         self.timestamp_str      = str("00:00:00")
         self.torque_sensor_str  = "0.00"
+        self.start_time_str     = str("HH:MM:SS - M/D/Y")
+        self.end_time_str       = str("HH:MM:SS - M/D/Y")
         self.start              = timer()
         self.end                = timer()
         self.excel              = excel # create an instance of the excel module to save the data
