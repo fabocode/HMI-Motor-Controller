@@ -22,6 +22,7 @@ WindowManager:
                 text: "[b]{}[/b]".format(root.timestamp_str)
                 font_size: 50
                 markup: True
+                size_hint_y: 0.5
             BoxLayout:
                 orientation: "horizontal"
                 BoxLayout:
@@ -31,7 +32,6 @@ WindowManager:
                         text: "[b]rpm set point[/b]"
                         font_size: 30
                         markup: True
-                        size_hint_y: None
                     Button:
                         id: rpm_set_point_button_id
                         text: "[b]Jog (rotate motor)[/b]"
