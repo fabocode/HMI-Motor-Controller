@@ -1,4 +1,5 @@
-import xlsxwriter, from datetime import datetime
+import xlsxwriter 
+from datetime import datetime
 
 def get_time():
     return str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
