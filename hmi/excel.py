@@ -9,8 +9,8 @@ def save_data(data, filename):
     # get parent home directory
     parent_dir = str(Path.home()) + "/Desktop/"
     # check if directory exists
-    if not os.path.exists(parent_dir + '/Motor_Data_Results'):
-        os.makedirs(parent_dir + '/Motor_Data_Results')
+    if not os.path.exists(parent_dir + '/mixer_data_recordings'):
+        os.makedirs(parent_dir + '/mixer_data_recordings')
 
 
     file_path_name = filename + '-' + get_time() + '.xlsx'
