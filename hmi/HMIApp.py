@@ -131,7 +131,6 @@ class Main(Screen):
         self.control_status_bar()   # update the status bar
         torque_data = self.torque_sensor.get_torque()
         self.torque_sensor_str = str(torque_data)
-        print(f"torque data - {torque_data}")
         if self.is_system_running():    # if system is running and no faults are detected
             self.timestamp_str = self.get_elapsed_time()    # update the timestamp string
             self.data['Elapsed Time'].append(self.get_elapsed_time())
