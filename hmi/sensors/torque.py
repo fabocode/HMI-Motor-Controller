@@ -15,3 +15,11 @@ class Torque_Sensor:
         except:
             print("Error: Torque sensor not connected")
             return 0.0
+
+
+if __name__ == "__main__":
+    torque = Torque_Sensor(0, 0)
+    while True:
+        torque.get_torque()
+        time.sleep(1)
+        print("\n")
