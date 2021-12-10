@@ -13,7 +13,7 @@ class HMI_Config:
 
     @staticmethod
     def get_path_to_save(filename):
-        return str(Path.home()) + '/Desktop/' + filename 
+        return str(Path.home()) + '/Desktop/' + 'Motor_Data_Results/' + filename 
 
 if __name__ == '__main__':
     # path = pathlib.Path(__file__).parent.absolute() / 'config.yaml'

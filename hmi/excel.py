@@ -1,11 +1,18 @@
-import xlsxwriter 
+import xlsxwriter, os
 from datetime import datetime
+from pathlib import Path
 
 def get_time():
     return str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-
 def save_data(data, filename):
+    # get parent home directory
+    parent_dir = str(Path.home()) + "/Desktop/"
+    # check if directory exists
+    if not os.path.exists(parent_dir + '/Motor_Data_Results'):
+        os.makedirs(parent_dir + '/Motor_Data_Results')
+
+
     file_path_name = filename + '-' + get_time() + '.xlsx'
     workbook = xlsxwriter.Workbook(file_path_name)    # Create an new Excel file and add a worksheet.
     worksheet = workbook.add_worksheet()
