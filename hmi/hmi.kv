@@ -45,6 +45,7 @@ WindowManager:
                     orientation: "vertical"
                     BoxLayout:
                         orientation: "vertical"
+                        margin: 10
                         Label:
                             id: start_time_label_id
                             text: "[b]input for rpm[/b]"
@@ -53,31 +54,31 @@ WindowManager:
                         Label:
                             id: start_time_label_id
                             text: "[b]input for rpm[/b]"
-                            font_size: 30
+                            font_size: 25
                             markup: True
                     BoxLayout:
                         orientation: "vertical"
                         Label:
                             id: start_time_label_id
                             text: "[b]Start Time[/b]"
-                            font_size: 30
+                            font_size: 20
                             markup: True
                         Label:
                             id: start_time_label_id
                             text: "[b]{}[/b]".format(root.start_time_str)
-                            font_size: 30
+                            font_size: 25
                             markup: True
                     BoxLayout:
                         orientation: "vertical"
                         Label:
                             id: end_time_label_id
                             text: "[b]End Time[/b]"
-                            font_size: 30
+                            font_size: 20
                             markup: True
                         Label:
                             id: end_time_label_id
                             text: "[b]{}[/b]".format(root.end_time_str)
-                            font_size: 30
+                            font_size: 25
                             markup: True
                         
 
