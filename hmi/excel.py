@@ -1,7 +1,11 @@
-import xlsxwriter
+import xlsxwriter, from datetime import datetime
+
+def get_time():
+    return str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
 
 def save_data(data, filename):
-    file_path_name = filename + '.xlsx'
+    file_path_name = filename + '-' + get_time() + '.xlsx'
     workbook = xlsxwriter.Workbook(file_path_name)    # Create an new Excel file and add a worksheet.
     worksheet = workbook.add_worksheet()
 
