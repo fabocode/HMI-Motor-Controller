@@ -50,12 +50,12 @@ WindowManager:
                         markup: True
                     Label:
                         id: start_time_label_id
-                        text: "[b]start time stamp[/b]"
+                        text: "[b]{}[/b]".format(root.start_time_str)
                         font_size: 35
                         markup: True
                     Label:
                         id: start_time_label_id
-                        text: "[b]stop time stamp[/b]"
+                        text: "[b]{}[/b]".format(root.end_time_str)
                         font_size: 35
                         markup: True
                         
@@ -87,7 +87,7 @@ WindowManager:
                 orientation: "horizontal"
                 TextInput:
                     id: test_name_id
-                    hint_text: "Test Name "
+                    hint_text: "Input Test Name"
                     multiline: False
                     markup: True
                     font_size: 30

@@ -33,6 +33,8 @@ class Main(Screen):
     test_name_str     = StringProperty('')
     timestamp_str     = StringProperty('')
     torque_sensor_str = StringProperty('')
+    start_time_str    = StringProperty('')
+    end_time_str      = StringProperty('')
     run_button_color  = ListProperty([1, 1, 1, 1])
 
     def __init__(self, **kwargs):
@@ -109,8 +111,8 @@ class Main(Screen):
             self.run_button_str = 'STOP'
             self.ids['run_button_id'].background_color = [1, 0, 0, 1]
 
-            # self.data['Start Time'].append(self.get_time())
             self.add_data(self.get_time(), 'Start Time')
+            self.start_time_str = self.get_time()
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
@@ -118,6 +120,7 @@ class Main(Screen):
                 # save data into excel file 
                 print("saving data into excel file ")
                 self.add_data(self.get_time(), 'Stop Time')
+                self.end_time_str = self.get_time()
                 filename = config.get_path_to_save(self.test_name_str)
                 self.excel.save_data(self.data, filename)
                 self.data = self.clear_data()
