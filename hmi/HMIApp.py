@@ -115,6 +115,7 @@ class Main(Screen):
 
             self.add_data(self.get_time(), 'Start Time')
             self.start_time_str = self.get_time()
+            self.end_time_str = str("HH:MM:SS - M/D/Y")
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
