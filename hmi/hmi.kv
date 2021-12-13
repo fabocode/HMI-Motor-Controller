@@ -20,14 +20,14 @@ WindowManager:
             Label:
                 id: time_label
                 text: "[b]{}[/b]".format(root.timestamp_str)
-                font_size: 50
+                font_size: 70
                 markup: True
                 size_hint_y: 0.5
             BoxLayout:
                 orientation: "horizontal"
                 BoxLayout:
                     orientation: "vertical"
-                    Button:
+                    TextInput:
                         id: rpm_set_point_button_id
                         text: "[b]rpm set point[/b]"
                         font_size: 30
