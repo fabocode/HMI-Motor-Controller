@@ -16,7 +16,7 @@ class Stepper_Motor:
     def set_motor(self) -> bool:
         # try:
         DAQC2.setDOUT(1, 7)
-            return True 
+        return True 
         # except:
         #     print("error writing to motor prin")
         #     return False
