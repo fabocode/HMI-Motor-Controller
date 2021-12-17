@@ -8,8 +8,6 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
-from kivy.core.window import Window
-from kivy.uix.vkeyboard import VKeyboard
 from screeninfo import get_monitors
 from datetime import date, datetime
 from timeit import default_timer as timer
@@ -57,19 +55,12 @@ class Main(Screen):
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
-        self.notes_str = ""
+
         self.data = self.clear_data()
 
-    def get_validate_name(self, filename):
+    def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
         return re.sub(r'[-\s]+', '-', filename).strip('-_')
-
-    def get_validate_number(self, num):
-        try:
-            return round(float(num), 2)
-        except:
-            print("error converting number to readable number")
-            return 0.00
 
     # Utils functions
     def get_date(self):
@@ -79,7 +70,7 @@ class Main(Screen):
         return str(datetime.now().strftime("%H:%M:%S - %m/%d/%y"))
     
     def get_elapsed_time(self):
-        return str(time.strftime("%H:%M:%S", time.gmtime(self.start - self.end)))
+        return str(time.strftime("%H:%M:%S", time.gmtime(self.start - self.end))	)
 
     def is_system_running(self):
         return self.system_status
@@ -94,45 +85,11 @@ class Main(Screen):
             self.end = timer()
             self.start = timer()
 
-    def set_layout(self, layout):
-        """ Change the keyboard layout to the one specified by *layout*. """
-        # print(f"layout: {layout}")
-        kb = Window.request_keyboard(
-            self._keyboard_close, self)
-        if kb.widget:
-            # If the current configuration supports Virtual Keyboards, this
-            # widget will be a kivy.uix.vkeyboard.VKeyboard instance.
-            self._keyboard = kb.widget
-            self._keyboard.layout = layout
-        else:
-            self._keyboard = kb
-
-        self._keyboard.bind(on_key_down=self.key_down,
-                            on_key_up=self.key_up)
-
-    def _keyboard_close(self, *args):
-        """ The active keyboard is being closed. """
-        print("keyboard being closed")
-        # if self._keyboard:
-        #     self._keyboard.unbind(on_key_down=self.key_down)
-        #     self._keyboard.unbind(on_key_up=self.key_up)
-        #     self._keyboard = None
-
     def on_test_name_evt(self, text_input):
         ''' Event handler for the test name input field '''
-        self.test_name_str = self.get_validate_name(text_input)
+        self.test_name_str = self.validate_name(text_input)
         print(f"text included - {self.test_name_str}")
-    
-    def on_set_rpm_input(self, text_input):
-        ''' Event handler for the RPM input field '''
-        print(f"rpm input is: {text_input}")
-        self.rpm_input_str = str(self.get_validate_number(text_input)) # validate number 
 
-    def on_notes_input(self, text_input):
-        ''' Event handler for the notes input field '''
-        print(f"Note is: {text_input}")
-        self.notes_str = text_input
-    
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
@@ -142,8 +99,7 @@ class Main(Screen):
             'Time Stamps': [],
             'RPM': [],
             'Torque': [],
-            'Blade Tip Velocity': [],
-            'Notes': []
+            'Blade Tip Velocity': []
         }
         return self.data 
 
@@ -166,7 +122,6 @@ class Main(Screen):
                 self.excel.save_data(self.data, self.test_name_str)
                 # save data into excel file 
                 print("saving data into excel file ")
-                self.data['Notes'].append(self.notes_str)
                 self.add_data(self.get_time(), 'Stop Time')
                 self.end_time_str = self.get_time()
                 filename = config.get_path_to_save(self.test_name_str)
@@ -194,17 +149,6 @@ class Main(Screen):
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
-    def key_down(self, keyboard, keycode, text, modifiers):
-        """ The callback function that catches keyboard events. """
-        self.displayLabel.text = u"Key pressed - {0}".format(text)
-
-    def key_up(self, keyboard, keycode, *args):
-        """ The callback function that catches keyboard events. """
-        # system keyboard keycode: (122, 'z')
-        # dock keyboard keycode: 'z'
-        if isinstance(keycode, tuple):
-            keycode = keycode[1]
-        self.displayLabel.text += u" (up {0})".format(keycode)
 
 # screen manager
 class WindowManager(ScreenManager):
