@@ -37,8 +37,14 @@ WindowManager:
                         id: rpm_set_point_text_input_id
                         hint_text: "Input RPM Set Point"
                         font_size: 30
+                        multiline: False
                         markup: True
-                        input_type: 'number'
+                        halign: "center"
+                        padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
+                        input_type: 'number'    
+                        on_text_validate: root.on_set_rpm_input(self.text)
+                        # on_focus: root.set_layout('numeric.json')
+                        # on_focus: root.set_layout('numeric.json')
                     Button:
                         id: rpm_set_point_button_id
                         text: "[b]Jog (rotate motor)[/b]"
@@ -106,7 +112,8 @@ WindowManager:
                     markup: True
                     font_size: 30
                     halign: "center"
-                    padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
+                    padding_y: [self.height / 3.0 - (self.line_height / 2.0) * len(self._lines), 0]
+                    # on_focus: root.set_layout('qwerty')
                     on_focus: self.text = "" if self.focus else "{}".format(self.text)
                     on_text_validate: root.on_test_name_evt(self.text)
                 Label:
@@ -116,9 +123,11 @@ WindowManager:
 
             TextInput:
                 hint_text: "Notes"
+                multiline: False
                 markup: True
                 font_size: 40
                 on_focus: self.text = "" if self.focus else "{}".format(self.text)
+                on_text_validate: root.on_notes_input(self.text)
             BoxLayout:
                 orientation: "horizontal"
                 Label:

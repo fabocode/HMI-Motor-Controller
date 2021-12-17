@@ -25,6 +25,7 @@ def save_data(data, filename):
     worksheet.set_column('E:E', 20)
     worksheet.set_column('F:F', 20)
     worksheet.set_column('G:G', 20)
+    worksheet.set_column('H:H', 20)
 
     # Add a bold format to use to highlight cells.
     header_format = workbook.add_format({'bold': True, 'text_wrap': True, 'align': 'center', 'valign': 'vcenter'})
@@ -40,6 +41,7 @@ def save_data(data, filename):
     worksheet.write('E1', 'RPM', header_format)
     worksheet.write('F1', 'Torque', header_format)
     worksheet.write('G1', 'Blade Tip Velocity', header_format)
+    worksheet.write('H1', 'Notes', header_format)
 
     # write data dictionary into excel 
     row = 1
@@ -47,9 +49,8 @@ def save_data(data, filename):
     # write each value tuple index into excel
     for key, value in data.items():
         for i in range(len(value)):
-            # worksheet.write(row, col, key)
-            # row += 1
-            worksheet.write(row, col, value[i])
+            if len(value) > 0:  # if there is data in the list
+                worksheet.write(row, col, value[i]) # write the value into the excel
             row += 1
             
         row = 1
