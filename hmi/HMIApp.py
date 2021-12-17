@@ -55,6 +55,7 @@ class Main(Screen):
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
+        self.notes_str = ''
 
         self.data = self.clear_data()
 
@@ -90,6 +91,15 @@ class Main(Screen):
         self.test_name_str = self.validate_name(text_input)
         print(f"text included - {self.test_name_str}")
 
+    def on_set_rpm_input(self, text_input):
+        ''' Event handler for the RPM input field '''
+        # check if text input is valid number
+        pass
+
+    def on_notes_input(self, text_input):
+        ''' Event handler for the notes input field '''
+        self.notes_str = text_input
+
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
@@ -99,7 +109,8 @@ class Main(Screen):
             'Time Stamps': [],
             'RPM': [],
             'Torque': [],
-            'Blade Tip Velocity': []
+            'Blade Tip Velocity': [],
+            'Notes': []
         }
         return self.data 
 
@@ -122,6 +133,7 @@ class Main(Screen):
                 self.excel.save_data(self.data, self.test_name_str)
                 # save data into excel file 
                 print("saving data into excel file ")
+                self.data['Notes'].append(self.notes_str)
                 self.add_data(self.get_time(), 'Stop Time')
                 self.end_time_str = self.get_time()
                 filename = config.get_path_to_save(self.test_name_str)
