@@ -39,12 +39,21 @@ class Stepper_Motor:
             print("error writing to motor prin")
             return False
 
+    def on(self):
+        DAQC2.clrDOUT(self.addr, 1, 0)
+
+    def off(self):
+        DAQC2.setDOUT(self.addr, 1, 1)
+
 if __name__ == '__main__':
     motor = Stepper_Motor()
-    motor.set_clockwise()
-    motor.set_motor(300)
+    # motor.set_clockwise()
+    # motor.set_motor(300)
     while True:
         freq = motor.get_frequency()
         print(f"freq: {freq}")
         print("set the motor")
-        time.sleep(1)
+        motor.on()
+        time.sleep(0.1)
+        motor.off()
+        time.sleep(0.1)
