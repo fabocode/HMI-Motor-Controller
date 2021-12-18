@@ -94,7 +94,10 @@ class Main(Screen):
     def on_set_rpm_input(self, text_input):
         ''' Event handler for the RPM input field '''
         # check if text input is valid number
-        pass
+        check = re.match(r'^[0-9]*$', text_input)
+        if check:
+            self.rpm_input = round(float(text_input), 2)
+
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
