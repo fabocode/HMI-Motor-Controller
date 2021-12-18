@@ -8,3 +8,11 @@
 # Note if you work in a virtual environment 
 It's required to type the following command `export CFLAGS=-fcommon`.
 This will enable to install the RPi.GPIO module without problems.
+
+# Wiring Connection with Stepper Driver and Raspberry Pi 
+| Stepper driver | Raspberry Pi Plates board |
+| -------------- | ------------------------- |
+| `DIR -`        |  `GND`                    |
+| `DIR +`        |  `PWM0`                   |
+| `PUL -`        |  `GND`                    |
+| `PUL +`        |  `PWM1`                   |
