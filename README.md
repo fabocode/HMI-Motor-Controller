@@ -13,6 +13,6 @@ This will enable to install the RPi.GPIO module without problems.
 | Stepper driver | Raspberry Pi Plates board |
 | -------------- | ------------------------- |
 | `DIR -`        |  `GND`                    |
-| `DIR +`        |  `PWM0`                   |
+| `DIR +`        |  `DOUT0`                  |
 | `PUL -`        |  `GND`                    |
-| `PUL +`        |  `PWM1`                   |
+| `PUL +`        |  `PWM0`                   |
