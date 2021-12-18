@@ -2,9 +2,9 @@ import piplates.DAQC2plate as DAQC2
 import time 
 
 class Stepper_Motor:
-    def __init__(self):
-        # self.addr = addr
-        pass
+    def __init__(self, addr=0):
+        self.addr = addr
+        self.channel = 0
     
     def get_frequency(self):
         try:
@@ -12,6 +12,14 @@ class Stepper_Motor:
         except:
             print("Error: Frequency sensor not connected")
             return 0.0
+
+    def set_motor(self, freq):
+        try:
+            DAQC2.setPWM(self.addr, self.channel, freq)
+            return True
+        except:
+            print("error writing to motor prin")
+            return False
 
     def on(self) -> bool:
         # try:
@@ -36,6 +44,5 @@ if __name__ == '__main__':
         print(f"freq: {freq}")
         print("set the motor")
         print("")
-        motor.on()
-        motor.off()
+        motor.set_motor(512)
         time.sleep(.1)
