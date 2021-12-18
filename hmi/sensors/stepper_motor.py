@@ -43,7 +43,7 @@ class Stepper_Motor:
         DAQC2.clrDOUTbit(self.addr, 0)
 
     def off(self):
-        DAQC2.setDOUTbit(self.addr, 1)
+        DAQC2.setDOUTbit(self.addr, 0)
 
 if __name__ == '__main__':
     motor = Stepper_Motor()
