@@ -49,7 +49,7 @@ if __name__ == '__main__':
     motor = Stepper_Motor()
     # motor.set_clockwise()
     # motor.set_motor(300)
-    fixed_pulse_rev = 800
+    fixed_pulse_rev = 400
     while True:
         # freq = motor.get_frequency()
         # print(f"freq: {freq}")
@@ -59,8 +59,8 @@ if __name__ == '__main__':
         # motor.off()
         # time.sleep(0.01)
         for i in range(fixed_pulse_rev):
-            motor.on()
             motor.off()
+            motor.on()
 
-        time.sleep(10)
-        break
+        time.sleep(5)
+        # break
