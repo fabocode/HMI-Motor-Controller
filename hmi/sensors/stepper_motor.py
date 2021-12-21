@@ -2,12 +2,15 @@ import piplates.DAQC2plate as DAQC2
 import time 
 
 class Stepper_Motor:
+
+    __REVOLUTIONS = 398.93
+
     def __init__(self, dir_pin=0, addr=0, channel=1):
         self.addr = addr
         self.dir_pin = dir_pin
         self.channel = channel
         self.ch_mult = 100
-        self.freq = 15000
+        self.freq = 10
         self.type = 3   # square wave
         self.level = 4  # 1:1
         self.initFG()
@@ -20,6 +23,11 @@ class Stepper_Motor:
 
     def update_freq(self, freq):
         DAQC2.fgFREQ(self.addr, self.channel, freq)
+
+    def set_rpm(self, rpm_input):
+        self.freq = round((rpm_input / 60.0) * self.__REVOLUTIONS, 2)
+        self.update_freq(self.freq)
+        return self.freq
     
     def get_frequency(self):
         try:
@@ -65,6 +73,9 @@ class Stepper_Motor:
 if __name__ == '__main__':
     motor = Stepper_Motor()
     motor.initFG()
+    print("setting rpm input")
+    desired_rpm = float(input("Enter desired rpm: "))
+    motor.set_rpm(desired_rpm)
     time.sleep(30)
     motor.stop()
 
