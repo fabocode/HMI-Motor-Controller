@@ -7,7 +7,7 @@ class Stepper_Motor:
         self.dir_pin = dir_pin
         self.channel = channel
         self.ch_mult = 100
-        self.freq = 1000
+        self.freq = 15000
         self.type = 3   # square wave
         self.level = 4  # 1:1
         self.initFG()
@@ -60,12 +60,12 @@ class Stepper_Motor:
         DAQC2.setDOUTbit(self.addr, 0)
 
     def stop(self):
-        DAQC2.fgFREQ(self.addr, self.channel, 0)
+        DAQC2.fgOFF(self.addr, self.channel)
 
 if __name__ == '__main__':
     motor = Stepper_Motor()
     motor.initFG()
-    time.sleep(5)
+    time.sleep(30)
     motor.stop()
 
 
