@@ -59,7 +59,13 @@ class Stepper_Motor:
     def off(self):
         DAQC2.setDOUTbit(self.addr, 0)
 
+    def stop(self):
+        DAQC2.fgFREQ(self.addr, self.channel, 0)
+
 if __name__ == '__main__':
     motor = Stepper_Motor()
     motor.initFG()
-    
+    time.sleep(5)
+    motor.stop()
+
+
