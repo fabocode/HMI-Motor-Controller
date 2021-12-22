@@ -116,9 +116,7 @@ class Main(Screen):
     def on_jog_toggle(self, value):
         ''' Event handler for the jog toggle button '''
         if value == 'down':
-            self.is_jogging = True
-        else:
-            self.is_jogging = False
+            self.is_jogging = not self.is_jogging
 
         
     def clear_data(self):
