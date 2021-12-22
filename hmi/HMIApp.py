@@ -54,8 +54,8 @@ class Main(Screen):
         self.end_time_str       = str("HH:MM:SS - M/D/Y")
         self.start              = timer()
         self.end                = timer()
-        self.now = 0
-        self.past = 0
+        self.now = datetime.today()
+        self.past = datetime.today()
         self.past_time = 0
         self.excel              = excel # create an instance of the excel module to save the data
         self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
