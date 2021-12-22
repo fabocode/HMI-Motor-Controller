@@ -26,6 +26,7 @@ def save_data(data, filename):
     worksheet.set_column('F:F', 20)
     worksheet.set_column('G:G', 20)
     worksheet.set_column('H:H', 20)
+    worksheet.set_column('I:I', 20)
 
     # Add a bold format to use to highlight cells.
     header_format = workbook.add_format({'bold': True, 'text_wrap': True, 'align': 'center', 'valign': 'vcenter'})
@@ -41,6 +42,7 @@ def save_data(data, filename):
     worksheet.write('E1', 'RPM', header_format)
     worksheet.write('F1', 'Torque', header_format)
     worksheet.write('G1', 'Blade Tip Velocity', header_format)
+    worksheet.write('G1', 'Total Revolution', header_format)
     worksheet.write('H1', 'Notes', header_format)
 
     # write data dictionary into excel 
