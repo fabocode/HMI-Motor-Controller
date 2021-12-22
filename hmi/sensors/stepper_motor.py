@@ -86,6 +86,9 @@ class Stepper_Motor:
             # print("Error: Frequency sensor not connected")
             pass
 
+    def __destroy__(self):
+        self.stop()
+
 if __name__ == '__main__':
     motor = Stepper_Motor()
     motor.on()
