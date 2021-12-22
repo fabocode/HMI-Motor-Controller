@@ -63,8 +63,8 @@ class Stepper_Motor:
         # check if freq is within limits
         if self.freq <= 10:
             self.freq = 10
-        elif self.freq >= 20000:
-            self.freq = 20000
+        elif self.freq >= 10000:
+            self.freq = 10000
 
         print("Frequency: ", self.freq)
         self.update_freq(self.freq)
@@ -86,15 +86,5 @@ class Stepper_Motor:
 
     def __destroy__(self):
         self.stop()
-
-if __name__ == '__main__':
-    motor = Stepper_Motor()
-    motor.on()
-    print("starting on the motor for 30 seconds")
-    # print("setting rpm input")
-    # desired_rpm = float(input("Enter desired rpm: "))
-    # motor.set_rpm(desired_rpm)
-    time.sleep(30)
-    motor.stop()
 
 
