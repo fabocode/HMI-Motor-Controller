@@ -118,6 +118,8 @@ class Main(Screen):
         if value == 'down':
             self.is_jogging = not self.is_jogging
 
+        print(f"value {value}")
+
         
     def clear_data(self):
         ''' Clear the data dictionary '''
