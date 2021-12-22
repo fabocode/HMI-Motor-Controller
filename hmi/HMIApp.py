@@ -44,7 +44,7 @@ class Main(Screen):
         self.run_button_str     = "START"
         self.date_str           = self.get_date()  # update the date string
         self.status_bar_str     = "STOPPED"
-        self.test_name_str      = "Test Name"
+        self.test_name_str      = ""
         self.timestamp_str      = str("00:00:00")
         self.torque_sensor_str  = "0.00"
         self.start_time_str     = str("HH:MM:SS - M/D/Y")
@@ -62,6 +62,7 @@ class Main(Screen):
         self.notes_str = ''
         self.data = self.clear_data()
         self.is_rpm_input_valid = False
+        self.rpm_input = 0.0
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -90,7 +91,7 @@ class Main(Screen):
             self.end = timer()
             self.start = timer()
 
-    def on_test_name_evt(self, text_input):
+    def on_test_name_input(self, text_input):
         ''' Event handler for the test name input field '''
         self.test_name_str = self.validate_name(text_input)
         print(f"text included - {self.test_name_str}")
@@ -160,7 +161,7 @@ class Main(Screen):
             self.timestamp_str = self.get_time_stamp()    # update the timestamp string
             self.data['Elapsed Time'].append(self.get_time_stamp())
             self.data['Time Stamps'].append(self.get_time())
-            self.data['RPM'].append(self.rpm_input)      # TO DO: get the RPM from the stepper motor
+            self.data['RPM'].append(0)      # TO DO: get the RPM from the stepper motor
             self.data['Torque'].append(torque_data)
             self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
 
@@ -186,10 +187,10 @@ class WindowManager(ScreenManager):
 kv = Builder.load_file("hmi.kv")
 
 
-class HMIApp(App):
+class HMI_Motor(App):
 
     def build(self):
         return kv
 
 if __name__ == '__main__':
-    HMIApp().run()
+    HMI_Motor().run()
