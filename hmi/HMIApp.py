@@ -70,6 +70,7 @@ class Main(Screen):
         self.total_revolution = 0.0
         self.blade_tip_velocity_str  = "0.0"
         self.total_revolution_str   = "0.0"
+        self.current_rpm_str         = "0.0"
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
