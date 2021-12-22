@@ -56,6 +56,7 @@ class Main(Screen):
         self.end                = timer()
         self.now = 0
         self.past = 0
+        self.past_time = 0
         self.excel              = excel # create an instance of the excel module to save the data
         self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
@@ -210,8 +211,8 @@ class Main(Screen):
         self.control_status_bar()   # update the status bar
 
         if self.is_system_running():    # if system is running and no faults are detected
-            if self.now - self.past >= timedelta(seconds=1):
-                self.past = self.now
+            if self.now - self.past_time >= timedelta(seconds=1):
+                self.past_time = self.now
                 torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
                 self.torque_sensor_str = str(torque_data)
                 self.current_rpm_str = str(self.rpm_input)
@@ -234,6 +235,7 @@ class Main(Screen):
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
+            self.past_time = datetime.today()
             self.stepper_motor.stop()
 
     # callback function for the date update    
