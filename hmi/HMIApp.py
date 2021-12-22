@@ -60,7 +60,7 @@ class Main(Screen):
         self.excel              = excel # create an instance of the excel module to save the data
         self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
-        Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
+        Clock.schedule_interval(self.update_callback, 0.5)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
         self.notes_str = ''
