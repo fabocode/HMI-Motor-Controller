@@ -63,6 +63,7 @@ class Main(Screen):
         self.data = self.clear_data()
         self.is_rpm_input_valid = False
         self.rpm_input = 0.0
+        self.is_jogging = False
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -115,16 +116,11 @@ class Main(Screen):
     def on_jog_toggle(self, value):
         ''' Event handler for the jog toggle button '''
         if value == 'down':
-            self.stepper_motor.start_jog()
+            self.is_jogging = True
         else:
-            self.stepper_motor.stop()
+            self.is_jogging = False
 
-        while value == 'down':
-            print("jogging")
-            self.stepper_motor.start_jog()
         
-
-
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
@@ -170,6 +166,10 @@ class Main(Screen):
     # Callback functions for the periodic task
 
     def update_callback(self, dt):
+        ''' Callback function for the periodic task '''
+        if self.is_jogging:
+            self.stepper_motor.jog()
+
         self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
         torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
@@ -183,12 +183,12 @@ class Main(Screen):
             self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
 
             # update the RPM and blade tip velocity
-            if isinstance(self.rpm_input, (float, int)) and self.rpm_input != 0 and self.is_rpm_input_valid:
+            if isinstance(self.rpm_input, (float, int)) and self.rpm_input != 0 and self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
                 self.stepper_motor.set_rpm(self.rpm_input)
 
-        else:   # if system is stopped
+        elif not self.is_system_running and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
             # self.stepper_motor.set_rpm(0)
             self.stepper_motor.stop()
