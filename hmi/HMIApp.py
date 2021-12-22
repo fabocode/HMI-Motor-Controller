@@ -190,7 +190,8 @@ class Main(Screen):
         return str(round( (27.33 * (rpm / 60.0)), 2))
 
     def get_total_revolution(self, rpm):
-        return (rpm / 60.0) + self.total_revolution
+        rpm = float(rpm)
+        return round((rpm / 60.0) + self.total_revolution, 2)
 
     def clear_total_revolution(self):
         self.total_revolution = 0.0
