@@ -46,7 +46,7 @@ class Stepper_Motor:
             DAQC2.fgON(self.addr, self.channel)
             DAQC2.fgTYPE(self.addr, self.channel, self.type)
             DAQC2.fgLEVEL(self.addr, self.channel, self.level)
-            self.update_freq(0)    # lowest level possible 
+            DAQC2.fgFREQ(self.addr, self.channel, 10)
         except:
             # print("Error: Frequency sensor not connected")
             pass

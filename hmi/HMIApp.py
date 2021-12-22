@@ -103,6 +103,10 @@ class Main(Screen):
         if check:
             self.rpm_input = round(float(text_input), 2)
             self.is_rpm_input_valid = True
+        else:
+            self.is_rpm_input_valid = True
+            self.rpm_input = 0.0
+        
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
@@ -173,7 +177,7 @@ class Main(Screen):
             self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
 
             # update the RPM and blade tip velocity
-            if self.rpm_input != 0 and self.is_rpm_input_valid:
+            if isinstance(self.rpm_input, (float, int)) and self.rpm_input != 0 and self.is_rpm_input_valid:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
                 self.stepper_motor.set_rpm(self.rpm_input)
