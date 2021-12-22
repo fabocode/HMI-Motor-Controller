@@ -210,19 +210,21 @@ class Main(Screen):
         self.control_status_bar()   # update the status bar
 
         if self.is_system_running():    # if system is running and no faults are detected
-            torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
-            self.torque_sensor_str = str(torque_data)
-            self.current_rpm_str = str(self.rpm_input)
-            self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
-            self.total_revolution = self.get_total_revolution(self.rpm_input)
-            self.total_revolution_str = str(self.total_revolution)
-            self.timestamp_str = self.get_time_stamp()    # update the timestamp string
-            self.data['Elapsed Time'].append(self.get_time_stamp())
-            self.data['Time Stamps'].append(self.get_time())
-            self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
-            self.data['Torque'].append(torque_data)
-            self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
-            self.data['Total Revolution'].append(self.total_revolution_str)
+            if self.now - self.past >= timedelta(seconds=1):
+                self.past = self.now
+                torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
+                self.torque_sensor_str = str(torque_data)
+                self.current_rpm_str = str(self.rpm_input)
+                self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+                self.total_revolution = self.get_total_revolution(self.rpm_input)
+                self.total_revolution_str = str(self.total_revolution)
+                self.timestamp_str = self.get_time_stamp()    # update the timestamp string
+                self.data['Elapsed Time'].append(self.get_time_stamp())
+                self.data['Time Stamps'].append(self.get_time())
+                self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
+                self.data['Torque'].append(torque_data)
+                self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
+                self.data['Total Revolution'].append(self.total_revolution_str)
             # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
