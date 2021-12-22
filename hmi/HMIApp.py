@@ -9,7 +9,7 @@ from kivy.properties import ObjectProperty, NumericProperty, StringProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
 from screeninfo import get_monitors
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from timeit import default_timer as timer
 from HMIConfig import HMI_Config
 from sensors.torque import Torque_Sensor
@@ -55,13 +55,13 @@ class Main(Screen):
         self.past = 0
         self.excel              = excel # create an instance of the excel module to save the data
         self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
-        # self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
+        self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
         self.notes_str = ''
-
         self.data = self.clear_data()
+        self.is_rpm_input_valid = False
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -101,6 +101,7 @@ class Main(Screen):
         check = re.match(r'^[0-9]*$', text_input)
         if check:
             self.rpm_input = round(float(text_input), 2)
+            self.is_rpm_input_valid = True
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
@@ -154,14 +155,22 @@ class Main(Screen):
     def update_callback(self, dt):
         self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
-        torque_data = self.torque_sensor.get_torque()
+        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
         if self.is_system_running():    # if system is running and no faults are detected
-            self.timestamp_str = self.get_elapsed_time()    # update the timestamp string
-            self.data['Elapsed Time'].append(self.get_elapsed_time())
+            self.timestamp_str = self.get_time_stamp()    # update the timestamp string
+            self.data['Elapsed Time'].append(self.get_time_stamp())
             self.data['Time Stamps'].append(self.get_time())
-            self.data['RPM'].append(0)
+            self.data['RPM'].append(self.rpm_input)      # TO DO: get the RPM from the stepper motor
             self.data['Torque'].append(torque_data)
+            self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
+
+            # update the RPM and blade tip velocity
+            if self.rpm_input != 0 and self.is_rpm_input_valid:
+                self.is_rpm_input_valid = False # reset the input flag
+                self.stepper_motor.start()
+                self.stepper_motor.set_rpm(self.rpm_input)
+
         else:   # if system is stopped
             self.past = datetime.today()    # get the current time
 
