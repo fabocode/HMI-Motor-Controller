@@ -1,7 +1,12 @@
 #:import hex kivy.utils.get_color_from_hex
+#:import Factory kivy.factory.Factory
 
 WindowManager:
     Main:
+
+<NameCheckPopup@Popup>:
+    auto_dismiss: False
+    title: 'Name Check'
 
 <Main>:
     test_name_text_input: test_name_id
@@ -48,6 +53,7 @@ WindowManager:
                         text: "[b]Jog (rotate motor)[/b]"
                         font_size: 30
                         markup: True
+                        on_release: Factory.NameCheckPopup().open() # root.on_jog_rpm_button_press()
                 BoxLayout:
                     orientation: "vertical"
                     BoxLayout:
