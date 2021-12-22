@@ -42,8 +42,8 @@ def save_data(data, filename):
     worksheet.write('E1', 'RPM', header_format)
     worksheet.write('F1', 'Torque', header_format)
     worksheet.write('G1', 'Blade Tip Velocity', header_format)
-    worksheet.write('G1', 'Total Revolution', header_format)
-    worksheet.write('H1', 'Notes', header_format)
+    worksheet.write('H1', 'Total Revolution', header_format)
+    worksheet.write('I1', 'Notes', header_format)
 
     # write data dictionary into excel 
     row = 1
