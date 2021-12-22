@@ -121,6 +121,8 @@ class Main(Screen):
             print("no valid input")
             self.is_rpm_input_valid = True
             self.rpm_input = 0.0
+        self.current_rpm_str = str(self.rpm_input)
+        self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
         
 
     def on_notes_input(self, text_input):
@@ -210,16 +212,17 @@ class Main(Screen):
         self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
 
+        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
+        self.torque_sensor_str = str(torque_data)
+        
+        
+        self.timestamp_str = self.get_time_stamp()    # update the timestamp string
+
         if self.is_system_running():    # if system is running and no faults are detected
             if self.now - self.past_time >= timedelta(seconds=1):
                 self.past_time = self.now
-                torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
-                self.torque_sensor_str = str(torque_data)
-                self.current_rpm_str = str(self.rpm_input)
-                self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
                 self.total_revolution = self.get_total_revolution(self.rpm_input)
                 self.total_revolution_str = str(self.total_revolution)
-                self.timestamp_str = self.get_time_stamp()    # update the timestamp string
                 self.data['Elapsed Time'].append(self.get_time_stamp())
                 self.data['Time Stamps'].append(self.get_time())
                 self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
