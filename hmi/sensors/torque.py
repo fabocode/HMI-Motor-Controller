@@ -3,7 +3,7 @@ import time
 import sys, yaml
 
 class Torque_Sensor:
-    def __init__(self, addr, channel):
+    def __init__(self, addr=0, channel=0):
         self.addr = addr
         self.channel = channel
     
