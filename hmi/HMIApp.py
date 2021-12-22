@@ -37,7 +37,7 @@ class Main(Screen):
     start_time_str          = StringProperty('')
     end_time_str            = StringProperty('')
     blade_tip_velocity_str  = StringProperty('')
-    total_revolutions_str   = StringProperty('')
+    total_revolution_str   = StringProperty('')
     current_rpm_str         = StringProperty('')
     run_button_color        = ListProperty([1, 1, 1, 1])
 
@@ -67,6 +67,7 @@ class Main(Screen):
         self.is_rpm_input_valid = False
         self.rpm_input = 0.0
         self.is_jogging = False
+        self.total_revolution = 0.0
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -181,12 +182,18 @@ class Main(Screen):
                 self.data = self.clear_data()
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
+            self.clear_total_revolution()  # clear the total revolutions counter
             # self.data['Stop Time'].append(self.get_time())
     
     def get_blade_tip_velocity(self, rpm):
-        print(f"rpm: {rpm} - type {type(rpm)}")
         rpm = float(rpm)
         return str(round( (27.33 * (rpm / 60.0)), 2))
+
+    def get_total_revolution(self, rpm):
+        return (rpm / 60.0) + self.total_revolution
+
+    def clear_total_revolution(self):
+        self.total_revolution = 0.0
         
     # Callback functions for the periodic task
     def update_callback(self, dt):
@@ -196,18 +203,20 @@ class Main(Screen):
 
         self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
-        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
-        self.torque_sensor_str = str(torque_data)
-        self.current_rpm_str = str(self.rpm_input)
-        self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
 
         if self.is_system_running():    # if system is running and no faults are detected
+            torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
+            self.torque_sensor_str = str(torque_data)
+            self.current_rpm_str = str(self.rpm_input)
+            self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+            self.total_revolution = self.get_total_revolution(self.rpm_input)
+            self.total_revolution_str = str(self.total_revolution)
             self.timestamp_str = self.get_time_stamp()    # update the timestamp string
             self.data['Elapsed Time'].append(self.get_time_stamp())
             self.data['Time Stamps'].append(self.get_time())
-            self.data['RPM'].append(0)      # TO DO: get the RPM from the stepper motor
+            self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
             self.data['Torque'].append(torque_data)
-            self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
+            self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
 
             # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
