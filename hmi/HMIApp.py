@@ -186,7 +186,7 @@ class Main(Screen):
     def get_blade_tip_velocity(self, rpm):
         print(f"rpm: {rpm} - type {type(rpm)}")
         rpm = float(rpm)
-        return str(round( (27.33 * (rpm, 60.0)) ,2)) + 'cm/sec'
+        return str(round( (27.33 * (rpm / 60.0)), 2)) + 'cm/sec'
         
 
     # Callback functions for the periodic task
