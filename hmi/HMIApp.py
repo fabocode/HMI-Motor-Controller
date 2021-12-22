@@ -100,12 +100,17 @@ class Main(Screen):
     def on_set_rpm_input(self, text_input):
         ''' Event handler for the RPM input field '''
         # check if text input is valid number
-        check = re.match(r'^[0-9]*$', text_input)
-        if check:
-            self.rpm_input = round(float(text_input), 2)
-            self.is_rpm_input_valid = True
+        if text_input.isdigit():
+
+            check = re.match(r'^[0-9]*$', text_input)
+            if check:
+                self.rpm_input = round(float(text_input), 2)
+                self.is_rpm_input_valid = True
+            else:
+                self.is_rpm_input_valid = True
+                self.rpm_input = 0.0
         else:
-            self.is_rpm_input_valid = True
+            self.is_rpm_input_valid = False
             self.rpm_input = 0.0
         
 
