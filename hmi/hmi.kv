@@ -170,7 +170,7 @@ WindowManager:
                     halign: "center"
                     valign: "middle"
                 Label:
-                    text: "[b]123[/b]"
+                    text: "[b]{}[/b]".format(root.blade_tip_velocity_str)
                     font_size: 50
                     markup: True
             BoxLayout:
@@ -180,7 +180,7 @@ WindowManager:
                     font_size: 30
                     markup: True
                 Label:
-                    text: "[b]123[/b]"
+                    text: "[b]{}[/b]".format(root.total_revolutions_str)
                     font_size: 50
                     markup: True
             BoxLayout:
@@ -190,6 +190,6 @@ WindowManager:
                     font_size: 30
                     markup: True
                 Label:
-                    text: "[b]123[/b]"
+                    text: "[b]{}[/b]".format(root.current_rpm_str)
                     font_size: 50
                     markup: True

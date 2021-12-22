@@ -28,15 +28,18 @@ Config.set('kivy', 'keyboard_mode', 'systemanddock')    # enable virtual keyboar
 
 # main screen
 class Main(Screen):
-    date_str          = StringProperty('')
-    run_button_str    = StringProperty('')
-    status_bar_str    = StringProperty('')
-    test_name_str     = StringProperty('')
-    timestamp_str     = StringProperty('')
-    torque_sensor_str = StringProperty('')
-    start_time_str    = StringProperty('')
-    end_time_str      = StringProperty('')
-    run_button_color  = ListProperty([1, 1, 1, 1])
+    date_str                = StringProperty('')
+    run_button_str          = StringProperty('')
+    status_bar_str          = StringProperty('')
+    test_name_str           = StringProperty('')
+    timestamp_str           = StringProperty('')
+    torque_sensor_str       = StringProperty('')
+    start_time_str          = StringProperty('')
+    end_time_str            = StringProperty('')
+    blade_tip_velocity_str  = StringProperty('')
+    total_revolutions_str   = StringProperty('')
+    current_rpm_str         = StringProperty('')
+    run_button_color        = ListProperty([1, 1, 1, 1])
 
     def __init__(self, **kwargs):
         super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
@@ -180,8 +183,12 @@ class Main(Screen):
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             # self.data['Stop Time'].append(self.get_time())
     
-    # Callback functions for the periodic task
+    def get_blade_tip_velocity(self, rpm):
+        rpm = float(rpm)
+        return str(round( (27.33 * (rpm, 60.0)) ,2)) + 'cm/sec'
+        
 
+    # Callback functions for the periodic task
     def update_callback(self, dt):
         ''' Callback function for the periodic task '''
         if self.is_jogging:
@@ -191,6 +198,9 @@ class Main(Screen):
         self.control_status_bar()   # update the status bar
         torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
+        self.current_rpm_str = str(self.rpm_input)
+        self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+
         if self.is_system_running():    # if system is running and no faults are detected
             self.timestamp_str = self.get_time_stamp()    # update the timestamp string
             self.data['Elapsed Time'].append(self.get_time_stamp())
@@ -200,7 +210,6 @@ class Main(Screen):
             self.data['Blade Tip Velocity'].append(0)   # TO DO: get the blade tip velocity from the stepper motor
 
             # update the RPM and blade tip velocity
-            # if isinstance(self.rpm_input, (float, int)) and self.rpm_input != 0 and self.is_rpm_input_valid and not self.is_jogging:
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
