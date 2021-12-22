@@ -3,37 +3,51 @@ import time
 
 class Stepper_Motor:
 
-    __REVOLUTIONS = 398.93
+    __REVOLUTIONS = 398.93  # number of steps per revolution
+    __JOG_FREQ = 10 # 10 Hz
 
-    def __init__(self, dir_pin=0, addr=0, channel=1):
+    def __init__(self, addr=0, channel=1):
         self.addr = addr
-        self.dir_pin = dir_pin
         self.channel = channel
         self.ch_mult = 100
         self.freq = 10
-        self.type = 3   # square wave
-        self.level = 4  # 1:1
-        DAQC2.fgTYPE(self.addr, self.channel, self.type)
-        DAQC2.fgLEVEL(self.addr, self.channel, self.level)
+        self.type = 3               # square wave
+        self.level = 4              # 1:1
+        self.set_square_wave()
+        self.set_level(self.level)
         self.stop()
 
-    def start(self):
-        DAQC2.fgON(self.addr, 1)
-        # DAQC2.fgTYPE(self.addr, self.channel, self.type)
-        # DAQC2.fgLEVEL(self.addr, self.channel, self.level)
-        # DAQC2.fgFREQ(self.addr, self.channel, self.freq)
+    def set_square_wave(self):
+        DAQC2.fgTYPE(self.addr, self.channel, self.type)
     
-    def jog(self):
-        DAQC2.fgON(self.addr, 1)
+    def set_level(self, level):
+        self.level = level
+        DAQC2.fgLEVEL(self.addr, self.channel, self.level)
+
+    def start(self):
+        DAQC2.fgON(self.addr, self.channel)
         DAQC2.fgTYPE(self.addr, self.channel, self.type)
         DAQC2.fgLEVEL(self.addr, self.channel, self.level)
-        DAQC2.fgFREQ(self.addr, self.channel, self.freq)
+    
+    def jog(self):
+        DAQC2.fgON(self.addr, self.channel)
+        DAQC2.fgTYPE(self.addr, self.channel, self.type)
+        DAQC2.fgLEVEL(self.addr, self.channel, self.level)
+        self.update_freq(0)    # lowest level possible 
 
     def update_freq(self, freq):
         DAQC2.fgFREQ(self.addr, self.channel, freq)
 
     def set_rpm(self, rpm_input):
         self.freq = round((rpm_input / 60.0) * self.__REVOLUTIONS, 2)
+
+        # check if freq is within limits
+        if self.freq <= 10:
+            self.freq = 10
+        elif self.freq >= 20000:
+            self.freq = 20000
+
+        print("Frequency: ", self.freq)
         self.update_freq(self.freq)
         return self.freq
     
