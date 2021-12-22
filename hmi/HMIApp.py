@@ -13,6 +13,7 @@ from datetime import date, datetime
 from timeit import default_timer as timer
 from HMIConfig import HMI_Config
 from sensors.torque import Torque_Sensor
+from sensors.stepper_motor import Stepper_Motor
 import time
 import excel
 import re
@@ -50,8 +51,11 @@ class Main(Screen):
         self.end_time_str       = str("HH:MM:SS - M/D/Y")
         self.start              = timer()
         self.end                = timer()
+        self.now = 0
+        self.past = 0
         self.excel              = excel # create an instance of the excel module to save the data
-        self.torque_sensor      = Torque_Sensor(0,0) # create an instance of the torque sensor (address 0, channel 0)
+        self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
+        # self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
@@ -69,9 +73,9 @@ class Main(Screen):
 
     def get_time(self):
         return str(datetime.now().strftime("%H:%M:%S - %m/%d/%y"))
-    
-    def get_elapsed_time(self):
-        return str(time.strftime("%H:%M:%S", time.gmtime(self.start - self.end))	)
+
+    def get_time_stamp(self):
+        return str(timedelta(seconds=(self.now - self.past).seconds))
 
     def is_system_running(self):
         return self.system_status
@@ -97,7 +101,6 @@ class Main(Screen):
         check = re.match(r'^[0-9]*$', text_input)
         if check:
             self.rpm_input = round(float(text_input), 2)
-
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
@@ -149,6 +152,7 @@ class Main(Screen):
     # Callback functions for the periodic task
 
     def update_callback(self, dt):
+        self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
         torque_data = self.torque_sensor.get_torque()
         self.torque_sensor_str = str(torque_data)
@@ -158,7 +162,8 @@ class Main(Screen):
             self.data['Time Stamps'].append(self.get_time())
             self.data['RPM'].append(0)
             self.data['Torque'].append(torque_data)
-            self.data['Blade Tip Velocity'].append(0)
+        else:   # if system is stopped
+            self.past = datetime.today()    # get the current time
 
     # callback function for the date update    
     def update_callback_date(self, dt):
