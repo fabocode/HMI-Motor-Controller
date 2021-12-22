@@ -184,6 +184,7 @@ class Main(Screen):
             # self.data['Stop Time'].append(self.get_time())
     
     def get_blade_tip_velocity(self, rpm):
+        print(f"rpm: {rpm} - type {type(rpm)}")
         rpm = float(rpm)
         return str(round( (27.33 * (rpm, 60.0)) ,2)) + 'cm/sec'
         
