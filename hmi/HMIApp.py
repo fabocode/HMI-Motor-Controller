@@ -125,7 +125,7 @@ class Main(Screen):
     def on_stop_jog(self):
         ''' Event handler for the stop jog button '''
         if not self.is_system_running():
-            # self.stepper_motor.stop_jog()
+            self.stepper_motor.stop()
             self.is_jogging = False
         #     self.run_button_color = [1, 0, 0, 1]
         # else:
@@ -203,6 +203,7 @@ class Main(Screen):
         elif not self.is_system_running and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
             # self.stepper_motor.set_rpm(0)
+            print("stop motor?")
             self.stepper_motor.stop()
 
     # callback function for the date update    
