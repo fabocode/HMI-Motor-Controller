@@ -68,6 +68,8 @@ class Main(Screen):
         self.rpm_input = 0.0
         self.is_jogging = False
         self.total_revolution = 0.0
+        self.blade_tip_velocity_str  = "0.0"
+        self.total_revolution_str   = "0.0"
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -152,6 +154,7 @@ class Main(Screen):
             'RPM': [],
             'Torque': [],
             'Blade Tip Velocity': [],
+            'Total Revolution': [],
             'Notes': []
         }
         return self.data 
@@ -218,7 +221,7 @@ class Main(Screen):
             self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
             self.data['Torque'].append(torque_data)
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
-
+            self.data['Total Revolution'].append(self.total_revolution_str)
             # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
