@@ -137,7 +137,6 @@ class Main(Screen):
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
-                self.excel.save_data(self.data, self.test_name_str)
                 # save data into excel file 
                 print("saving data into excel file ")
                 self.data['Notes'].append(self.notes_str)
