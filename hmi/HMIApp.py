@@ -168,6 +168,7 @@ class Main(Screen):
         if self.is_jogging:
             self.stepper_motor.jog()
 
+        print(f"is jogging? {self.is_jogging}")
         self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
         torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
