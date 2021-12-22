@@ -108,6 +108,13 @@ class Main(Screen):
         ''' Event handler for the notes input field '''
         self.notes_str = text_input
 
+    def on_jog_toggle(self, value):
+        ''' Event handler for the jog toggle button '''
+        if value == 'down':
+            self.stepper_motor.start_jog()
+        else:
+            self.stepper_motor.stop()
+
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
@@ -138,8 +145,8 @@ class Main(Screen):
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
-                # save data into excel file 
-                print("saving data into excel file ")
+                # save data into excel file and clear the data dictionary
+                self.stepper_motor.stop()
                 self.data['Notes'].append(self.notes_str)
                 self.add_data(self.get_time(), 'Stop Time')
                 self.end_time_str = self.get_time()
@@ -173,6 +180,8 @@ class Main(Screen):
 
         else:   # if system is stopped
             self.past = datetime.today()    # get the current time
+            # self.stepper_motor.set_rpm(0)
+            self.stepper_motor.stop()
 
     # callback function for the date update    
     def update_callback_date(self, dt):

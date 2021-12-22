@@ -51,7 +51,7 @@ WindowManager:
                         size_hint_y: 0.5
                     TextInput:
                         id: rpm_set_point_text_input_id
-                        hint_text: "Input RPM Set Point"
+                        hint_text: "(1.5 - 1504) RPM"
                         font_size: 30
                         multiline: False
                         markup: True
@@ -59,12 +59,11 @@ WindowManager:
                         padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
                         input_type: 'number'    
                         on_text_validate: root.on_set_rpm_input(self.text)
-                    Button:
-                        id: rpm_set_point_button_id
+                    ToggleButton:
                         text: "[b]Jog (rotate motor)[/b]"
                         font_size: 30
                         markup: True
-                        on_release: Factory.NameCheckPopup().open() # root.on_jog_rpm_button_press()
+                        on_release: root.on_jog_toggle(self.state)
                 BoxLayout:
                     orientation: "vertical"
                     BoxLayout:
@@ -130,11 +129,18 @@ WindowManager:
                     padding_y: [self.height / 3.0 - (self.line_height / 2.0) * len(self._lines), 0]
                     # on_focus: root.set_layout('qwerty')
                     on_focus: self.text = "" if self.focus else "{}".format(self.text)
-                    on_text_validate: root.on_test_name_evt(self.text)
-                Label:
-                    text: "[b]{}[/b]".format(root.test_name_str)
-                    markup: True
-                    font_size: 30
+                    on_text_validate: root.on_test_name_input(self.text)
+                BoxLayout:
+                    orientation: "vertical"
+                    Label:
+                        id: test_name_label_id
+                        text: "[b]Test Name[/b]"
+                        font_size: 20
+                        markup: True
+                    Label:
+                        text: "[b]{}[/b]".format(root.test_name_str)
+                        markup: True
+                        font_size: 30
 
             TextInput:
                 hint_text: "Notes"

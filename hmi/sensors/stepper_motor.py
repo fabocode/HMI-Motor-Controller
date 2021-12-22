@@ -41,7 +41,7 @@ class Stepper_Motor:
             # print("Error: Frequency sensor not connected")
             pass
     
-    def jog(self):
+    def start_jog(self):
         try:
             DAQC2.fgON(self.addr, self.channel)
             DAQC2.fgTYPE(self.addr, self.channel, self.type)
