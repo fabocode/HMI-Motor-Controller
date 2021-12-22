@@ -119,6 +119,12 @@ class Main(Screen):
         else:
             self.stepper_motor.stop()
 
+        while value == 'down':
+            print("jogging")
+            self.stepper_motor.start_jog()
+        
+
+
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
