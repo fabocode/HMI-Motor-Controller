@@ -113,12 +113,23 @@ class Main(Screen):
         ''' Event handler for the notes input field '''
         self.notes_str = text_input
 
-    def on_jog_toggle(self, value):
-        ''' Event handler for the jog toggle button '''
-        if value == 'down':
-            self.is_jogging = not self.is_jogging
+    def on_start_jog(self):
+        ''' Event handler for the start jog button '''
+        if not self.is_system_running():
+            # self.stepper_motor.start_jog()
+            self.is_jogging = True
+        #     self.run_button_color = [0, 1, 0, 1]
+        # else:
+        #     self.run_button_color = [1, 0, 0, 1]
 
-        print(f"value {value}")
+    def on_stop_jog(self):
+        ''' Event handler for the stop jog button '''
+        if not self.is_system_running():
+            # self.stepper_motor.stop_jog()
+            self.is_jogging = False
+        #     self.run_button_color = [1, 0, 0, 1]
+        # else:
+        #     self.run_button_color = [0, 1, 0, 1]
 
         
     def clear_data(self):
