@@ -222,11 +222,11 @@ class Main(Screen):
         self.now = datetime.today() # get the current time
 
         if self.is_system_running():    # if system is running and no faults are detected
-            self.timestamp_str = self.get_time_stamp()    # update the timestamp string
             self.seconds_counter += 1
             self.total_revolution = self.get_total_revolution(self.rpm_input)
             self.total_revolution_str = str(self.total_revolution)
-            self.data['Elapsed Time'].append(self.get_time_format(self.seconds_counter))
+            self.timestamp_str = self.get_time_format(self.seconds_counter)
+            self.data['Elapsed Time'].append(self.timestamp_str)
             self.data['Time Stamps'].append(self.get_time())
             self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
             self.data['Torque'].append(torque_data)
@@ -242,7 +242,9 @@ class Main(Screen):
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
             self.stepper_motor.stop()
+            self.seconds_counter = 0
         else:
+            self.seconds_counter = 0
             self.past = datetime.today()
 
     # callback function for the date update    
