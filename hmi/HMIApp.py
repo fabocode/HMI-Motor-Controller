@@ -243,7 +243,13 @@ class Main(Screen):
             self.past = datetime.today()    # get the current time
             self.stepper_motor.stop()
             self.seconds_counter = 0
+            self.total_revolution_str = str(self.total_revolution)
+            self.rpm_input = 0
+            self.current_rpm_str = str(self.rpm_input)
         else:
+            self.total_revolution_str = str(self.total_revolution)
+            self.rpm_input = 0
+            self.current_rpm_str = str(self.rpm_input)
             self.seconds_counter = 0
             self.past = datetime.today()
 
