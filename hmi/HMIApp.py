@@ -176,6 +176,13 @@ class Main(Screen):
             self.add_data(self.get_time(), 'Start Time')
             self.start_time_str = self.get_time()
             self.end_time_str = str("HH:MM:SS - M/D/Y")
+
+            # update the RPM and blade tip velocity
+            if self.is_rpm_input_valid and not self.is_jogging:
+                self.is_rpm_input_valid = False # reset the input flag
+                self.stepper_motor.start()
+                self.stepper_motor.set_rpm(self.rpm_input)
+                print("start the motor")
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
@@ -237,11 +244,11 @@ class Main(Screen):
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
             self.data['Total Revolution'].append(self.total_revolution_str)
             # update the RPM and blade tip velocity
-            if self.is_rpm_input_valid and not self.is_jogging:
-                self.is_rpm_input_valid = False # reset the input flag
-                self.stepper_motor.start()
-                self.stepper_motor.set_rpm(self.rpm_input)
-                print("start the motor")
+            # if self.is_rpm_input_valid and not self.is_jogging:
+            #     self.is_rpm_input_valid = False # reset the input flag
+            #     self.stepper_motor.start()
+            #     self.stepper_motor.set_rpm(self.rpm_input)
+            #     print("start the motor")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
