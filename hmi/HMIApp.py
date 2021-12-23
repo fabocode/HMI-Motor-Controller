@@ -270,7 +270,8 @@ class Main(Screen):
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
-            self.stepper_motor.stop()
+            print("stop motor ")
+            # self.stepper_motor.stop()
             
 
     # callback function for the date update    
