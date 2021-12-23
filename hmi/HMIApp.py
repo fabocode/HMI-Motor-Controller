@@ -241,8 +241,9 @@ class Main(Screen):
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
-            self.past_time = datetime.today()
             self.stepper_motor.stop()
+        else:
+            self.past = datetime.today()
 
     # callback function for the date update    
     def update_callback_date(self, dt):
