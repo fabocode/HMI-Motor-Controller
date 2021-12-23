@@ -246,12 +246,12 @@ class Main(Screen):
             self.total_revolution_str = str(self.total_revolution)
             self.rpm_input = 0
             self.current_rpm_str = str(self.rpm_input)
-        else:
-            self.total_revolution_str = str(self.total_revolution)
-            self.rpm_input = 0
-            self.current_rpm_str = str(self.rpm_input)
-            self.seconds_counter = 0
-            self.past = datetime.today()
+        # else:
+        #     self.total_revolution_str = str(self.total_revolution)
+        #     self.rpm_input = 0
+        #     self.current_rpm_str = str(self.rpm_input)
+        #     self.seconds_counter = 0
+        #     self.past = datetime.today()
 
     # callback function for the date update    
     def update_callback_date(self, dt):
