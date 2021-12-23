@@ -83,7 +83,8 @@ class Main(Screen):
             if self.is_rpm_input_valid:
                 self.is_rpm_input_valid = False
                 self.stepper_motor.start()
-                self.stepper_motor.set_rpm(self.rpm_input)
+                # while True: 
+            self.stepper_motor.set_rpm(self.rpm_input)
             time.sleep(1)
             if self.running:
                 self.running = False
@@ -278,6 +279,13 @@ class Main(Screen):
 
     def close_app(self):
         ''' Close the application '''
+        self.running = True 
+        self.thread.join()
+        App.get_running_app().stop()
+        os._exit(0)
+
+    def __destroy__(self):
+        ''' Destroy the application '''
         self.running = True 
         self.thread.join()
         App.get_running_app().stop()
