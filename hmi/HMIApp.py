@@ -241,13 +241,12 @@ class Main(Screen):
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
-                
-            self.stepper_motor.set_rpm(self.rpm_input)
-            print("start the motor")
+                self.stepper_motor.set_rpm(self.rpm_input)
+                print("start the motor")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
-            self.stepper_motor.stop()
+            # self.stepper_motor.stop()
             print("stop motor")
             
 
