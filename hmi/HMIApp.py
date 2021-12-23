@@ -74,12 +74,15 @@ class Main(Screen):
         self.total_revolution_str   = "0.0"
         self.current_rpm_str         = "0.0"
         self.seconds_counter = 0
-        self.thread = Thread(target=self.run_motor, args=(self.rpm_input,))
+        self.thread = Thread(target=self.run_motor)
         self.thread.start()
     
     def run_motor(self, rpm):
         while True:
-            print(f"status of motor: {self.is_rpm_input_valid} - rpm input: {rpm}")
+            if self.is_rpm_input_valid:
+                self.is_rpm_input_valid = False
+                self.stepper_motor.start()
+                self.stepper_motor.set_rpm(self.rpm_input)
             time.sleep(1)
         
 
