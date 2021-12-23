@@ -60,7 +60,7 @@ class Main(Screen):
         self.excel              = excel # create an instance of the excel module to save the data
         self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
-        Clock.schedule_interval(self.update_callback, 0.5)    # setup periodic task
+        Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
         self.notes_str = ''
@@ -223,23 +223,23 @@ class Main(Screen):
         self.timestamp_str = self.get_time_stamp()    # update the timestamp string
 
         if self.is_system_running():    # if system is running and no faults are detected
-            if self.now - self.past_time >= timedelta(seconds=1):
-                self.past_time = self.now
-                self.seconds_counter += 1
-                self.total_revolution = self.get_total_revolution(self.rpm_input)
-                self.total_revolution_str = str(self.total_revolution)
-                self.data['Elapsed Time'].append(self.get_time_format(self.seconds_counter))
-                self.data['Time Stamps'].append(self.get_time())
-                self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
-                self.data['Torque'].append(torque_data)
-                self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
-                self.data['Total Revolution'].append(self.total_revolution_str)
-            # update the RPM and blade tip velocity
-            if self.is_rpm_input_valid and not self.is_jogging:
-                self.is_rpm_input_valid = False # reset the input flag
-                self.stepper_motor.start()
-                self.stepper_motor.set_rpm(self.rpm_input)
-                print("start the motor")
+            # if self.now - self.past_time >= timedelta(seconds=1):
+            # self.past_time = self.now
+            self.seconds_counter += 1
+            self.total_revolution = self.get_total_revolution(self.rpm_input)
+            self.total_revolution_str = str(self.total_revolution)
+            self.data['Elapsed Time'].append(self.get_time_format(self.seconds_counter))
+            self.data['Time Stamps'].append(self.get_time())
+            self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
+            self.data['Torque'].append(torque_data)
+            self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
+            self.data['Total Revolution'].append(self.total_revolution_str)
+        # update the RPM and blade tip velocity
+        if self.is_rpm_input_valid and not self.is_jogging:
+            self.is_rpm_input_valid = False # reset the input flag
+            self.stepper_motor.start()
+            self.stepper_motor.set_rpm(self.rpm_input)
+            print("start the motor")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
