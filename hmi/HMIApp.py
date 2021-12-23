@@ -213,18 +213,16 @@ class Main(Screen):
         if self.is_jogging:
             self.stepper_motor.jog()
 
-        self.now = datetime.today() # get the current time
         self.control_status_bar()   # update the status bar
 
         torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
         
         
+        self.now = datetime.today() # get the current time
         self.timestamp_str = self.get_time_stamp()    # update the timestamp string
 
         if self.is_system_running():    # if system is running and no faults are detected
-            # if self.now - self.past_time >= timedelta(seconds=1):
-            # self.past_time = self.now
             self.seconds_counter += 1
             self.total_revolution = self.get_total_revolution(self.rpm_input)
             self.total_revolution_str = str(self.total_revolution)
@@ -234,12 +232,12 @@ class Main(Screen):
             self.data['Torque'].append(torque_data)
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
             self.data['Total Revolution'].append(self.total_revolution_str)
-        # update the RPM and blade tip velocity
-        if self.is_rpm_input_valid and not self.is_jogging:
-            self.is_rpm_input_valid = False # reset the input flag
-            self.stepper_motor.start()
-            self.stepper_motor.set_rpm(self.rpm_input)
-            print("start the motor")
+            # update the RPM and blade tip velocity
+            if self.is_rpm_input_valid and not self.is_jogging:
+                self.is_rpm_input_valid = False # reset the input flag
+                self.stepper_motor.start()
+                self.stepper_motor.set_rpm(self.rpm_input)
+                print("start the motor")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
