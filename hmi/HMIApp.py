@@ -177,13 +177,13 @@ class Main(Screen):
             self.start_time_str = self.get_time()
             self.end_time_str = str("HH:MM:SS - M/D/Y")
 
+        else:
             # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
                 self.stepper_motor.set_rpm(self.rpm_input)
                 print("start the motor")
-        else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
                 # save data into excel file and clear the data dictionary
@@ -201,6 +201,7 @@ class Main(Screen):
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             self.clear_total_revolution()  # clear the total revolutions counter
             # self.data['Stop Time'].append(self.get_time())
+            print("start the motor from this button")
     
     def get_blade_tip_velocity(self, rpm):
         rpm = float(rpm)
