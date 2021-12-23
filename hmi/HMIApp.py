@@ -189,6 +189,7 @@ class Main(Screen):
                 self.data = self.clear_data()
                 self.current_rpm_str = "0.0"
                 self.blade_tip_velocity_str = "0.0"
+                self.seconds_counter = 0
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             self.clear_total_revolution()  # clear the total revolutions counter
