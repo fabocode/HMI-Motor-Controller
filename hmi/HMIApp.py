@@ -220,9 +220,9 @@ class Main(Screen):
         
         
         self.now = datetime.today() # get the current time
-        self.timestamp_str = self.get_time_stamp()    # update the timestamp string
 
         if self.is_system_running():    # if system is running and no faults are detected
+            self.timestamp_str = self.get_time_stamp()    # update the timestamp string
             self.seconds_counter += 1
             self.total_revolution = self.get_total_revolution(self.rpm_input)
             self.total_revolution_str = str(self.total_revolution)
