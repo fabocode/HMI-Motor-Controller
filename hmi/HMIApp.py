@@ -14,7 +14,7 @@ from timeit import default_timer as timer
 from HMIConfig import HMI_Config
 from sensors.torque import Torque_Sensor
 from sensors.stepper_motor import Stepper_Motor
-import time
+import time, os
 import excel
 import re
 from threading import Thread
@@ -77,13 +77,16 @@ class Main(Screen):
         self.thread = Thread(target=self.run_motor)
         self.thread.start()
     
-    def run_motor(self, rpm):
+    def run_motor(self):
         while True:
             if self.is_rpm_input_valid:
                 self.is_rpm_input_valid = False
                 self.stepper_motor.start()
                 self.stepper_motor.set_rpm(self.rpm_input)
             time.sleep(1)
+            if self.running:
+                self.running = False
+                break
         
 
     def validate_name(self, filename):
@@ -272,6 +275,12 @@ class Main(Screen):
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
+    def close_app(self):
+        ''' Close the application '''
+        self.running = True 
+        self.thread.join()
+        App.get_running_app().stop()
+        os._exit(0)
 
 # screen manager
 class WindowManager(ScreenManager):
