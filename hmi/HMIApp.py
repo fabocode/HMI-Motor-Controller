@@ -188,6 +188,10 @@ class Main(Screen):
                 filename = config.get_path_to_save(self.test_name_str)
                 self.excel.save_data(self.data, filename)
                 self.data = self.clear_data()
+                self.seconds_counter = 0
+                self.total_revolution_str = str(self.total_revolution)
+                self.rpm_input = 0
+                self.current_rpm_str = str(self.rpm_input)
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             self.clear_total_revolution()  # clear the total revolutions counter
@@ -242,16 +246,7 @@ class Main(Screen):
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
             self.stepper_motor.stop()
-            self.seconds_counter = 0
-            self.total_revolution_str = str(self.total_revolution)
-            self.rpm_input = 0
-            self.current_rpm_str = str(self.rpm_input)
-        # else:
-        #     self.total_revolution_str = str(self.total_revolution)
-        #     self.rpm_input = 0
-        #     self.current_rpm_str = str(self.rpm_input)
-        #     self.seconds_counter = 0
-        #     self.past = datetime.today()
+            
 
     # callback function for the date update    
     def update_callback_date(self, dt):
