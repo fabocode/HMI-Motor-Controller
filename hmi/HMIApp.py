@@ -122,8 +122,7 @@ class Main(Screen):
             print("no valid input")
             self.is_rpm_input_valid = True
             self.rpm_input = 0.0
-        self.current_rpm_str = str(self.rpm_input)
-        self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+        
         
 
     def on_notes_input(self, text_input):
@@ -227,6 +226,8 @@ class Main(Screen):
 
         if self.is_system_running():    # if system is running and no faults are detected
             self.seconds_counter += 1
+            self.current_rpm_str = str(self.rpm_input)
+            self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
             self.total_revolution = self.get_total_revolution(self.rpm_input)
             self.total_revolution_str = str(self.total_revolution)
             self.timestamp_str = self.get_time_format(self.seconds_counter)
