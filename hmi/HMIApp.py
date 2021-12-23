@@ -72,6 +72,7 @@ class Main(Screen):
         self.blade_tip_velocity_str  = "0.0"
         self.total_revolution_str   = "0.0"
         self.current_rpm_str         = "0.0"
+        self.seconds_counter = 0
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -202,6 +203,9 @@ class Main(Screen):
 
     def clear_total_revolution(self):
         self.total_revolution = 0.0
+
+    def get_time_format(self, sec):
+        return time.strftime("%H:%M:%S", time.gmtime(sec))
         
     # Callback functions for the periodic task
     def update_callback(self, dt):
@@ -221,9 +225,10 @@ class Main(Screen):
         if self.is_system_running():    # if system is running and no faults are detected
             if self.now - self.past_time >= timedelta(seconds=1):
                 self.past_time = self.now
+                self.seconds_counter += 1
                 self.total_revolution = self.get_total_revolution(self.rpm_input)
                 self.total_revolution_str = str(self.total_revolution)
-                self.data['Elapsed Time'].append(self.get_time_stamp())
+                self.data['Elapsed Time'].append(self.get_time_format(self.seconds_counter))
                 self.data['Time Stamps'].append(self.get_time())
                 self.data['RPM'].append(self.current_rpm_str)      # TO DO: get the RPM from the stepper motor
                 self.data['Torque'].append(torque_data)
