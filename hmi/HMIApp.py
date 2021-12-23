@@ -76,6 +76,7 @@ class Main(Screen):
         self.seconds_counter = 0
         self.thread = Thread(target=self.run_motor)
         self.thread.start()
+        self.running = False
     
     def run_motor(self):
         while True:
