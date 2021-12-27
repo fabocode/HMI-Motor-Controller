@@ -18,6 +18,7 @@ import time
 import excel
 import re
 from threading import Thread
+from multiprocessing import Process
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
@@ -76,13 +77,13 @@ class Main(Screen):
         self.seconds_counter = 0
         self.is_running = False
         self.is_stopped = False
-        self.torque_sensor_thread = Thread(target=self.read_torque_data)
+        self.torque_sensor_thread = Process(target=self.read_torque_data)
         self.torque_sensor_thread.start()
 
     def read_torque_data(self):
         while True:
             # self.torque_sensor_str = str(self.torque_sensor.read_torque())
-            print("running thread")
+            print("running multiple processes")
             if self.is_running:
                 # self.torque_sensor_str = str(self.torque_sensor.read_torque())
                 print(f'torque sensor: {self.stepper_motor.get_torque()}')
