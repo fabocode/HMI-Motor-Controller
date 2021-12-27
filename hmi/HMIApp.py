@@ -79,7 +79,7 @@ class Main(Screen):
         self.is_running = False
         self.is_stopped = False
 
-        def read_torque_data():
+        def read_torque_data(self):
             while True:
                 # self.torque_sensor_str = str(self.torque_sensor.read_torque())
                 if self.is_running:
