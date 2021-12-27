@@ -79,16 +79,16 @@ class Main(Screen):
         self.is_running = False
         self.is_stopped = False
 
-        def read_torque_data(self):
-            while True:
+    def read_torque_data(self):
+        while True:
+            # self.torque_sensor_str = str(self.torque_sensor.read_torque())
+            if self.is_running:
                 # self.torque_sensor_str = str(self.torque_sensor.read_torque())
-                if self.is_running:
-                    # self.torque_sensor_str = str(self.torque_sensor.read_torque())
-                    print(f'torque sensor: {self.stepper_motor.get_torque()}')
+                print(f'torque sensor: {self.stepper_motor.get_torque()}')
 
-                if self.is_stopped:
-                    break
-                time.sleep(1)
+            if self.is_stopped:
+                break
+            time.sleep(1)
 
 
 
