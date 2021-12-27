@@ -74,10 +74,10 @@ class Main(Screen):
         self.total_revolution_str   = "0.0"
         self.current_rpm_str         = "0.0"
         self.seconds_counter = 0
-        self.torque_sensor_thread = Thread(target=self.read_torque_data)
-        self.torque_sensor_thread.start()
         self.is_running = False
         self.is_stopped = False
+        self.torque_sensor_thread = Thread(target=self.read_torque_data)
+        self.torque_sensor_thread.start()
 
     def read_torque_data(self):
         while True:
