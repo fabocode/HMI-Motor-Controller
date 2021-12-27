@@ -17,6 +17,7 @@ from sensors.stepper_motor import Stepper_Motor
 import time
 import excel
 import re
+from threading import Thread
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
@@ -73,6 +74,24 @@ class Main(Screen):
         self.total_revolution_str   = "0.0"
         self.current_rpm_str         = "0.0"
         self.seconds_counter = 0
+        self.torque_sensor_thread = Thread(target=self.read_torque_data)
+        self.torque_sensor_thread.start()
+        self.is_running = False
+        self.is_stopped = False
+
+        def read_torque_data():
+            while True:
+                # self.torque_sensor_str = str(self.torque_sensor.read_torque())
+                if self.is_running:
+                    # self.torque_sensor_str = str(self.torque_sensor.read_torque())
+                    print(f'torque sensor: {self.stepper_motor.get_torque()}')
+
+                if self.is_stopped:
+                    break
+                time.sleep(1)
+
+        self.torque_sensor_thread.start()
+
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -200,6 +219,7 @@ class Main(Screen):
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             self.clear_total_revolution()  # clear the total revolutions counter
+            self.is_running = False
             # self.data['Stop Time'].append(self.get_time())
     
     def get_blade_tip_velocity(self, rpm):
@@ -232,6 +252,7 @@ class Main(Screen):
         self.now = datetime.today() # get the current time
 
         if self.is_system_running():    # if system is running and no faults are detected
+            self.is_running = True      # set the running flag to True
             self.seconds_counter += 1
             self.current_rpm_str = str(self.rpm_input)
             self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
