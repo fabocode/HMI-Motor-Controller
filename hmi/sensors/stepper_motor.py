@@ -17,6 +17,14 @@ class Stepper_Motor:
         self.set_level(self.level)
         self.stop()
 
+    def get_torque(self) -> float:
+        try:
+            Nm = abs(round(DAQC2.getADC(self.addr, self.channel) * 0.05, 4))
+            return Nm
+        except:
+            print("Error: Torque sensor not connected")
+            return 0.0
+
     def set_square_wave(self):
         try:
             DAQC2.fgTYPE(self.addr, self.channel, self.type)
