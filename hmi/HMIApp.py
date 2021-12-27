@@ -82,6 +82,7 @@ class Main(Screen):
     def read_torque_data(self):
         while True:
             # self.torque_sensor_str = str(self.torque_sensor.read_torque())
+            print("running thread")
             if self.is_running:
                 # self.torque_sensor_str = str(self.torque_sensor.read_torque())
                 print(f'torque sensor: {self.stepper_motor.get_torque()}')
