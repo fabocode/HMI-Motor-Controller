@@ -90,7 +90,6 @@ class Main(Screen):
                     break
                 time.sleep(1)
 
-        self.torque_sensor_thread.start()
 
 
     def validate_name(self, filename):
