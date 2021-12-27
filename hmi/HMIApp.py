@@ -224,7 +224,8 @@ class Main(Screen):
 
         self.control_status_bar()   # update the status bar
 
-        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
+        # torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
+        torque_data = self.stepper_motor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
         
         
