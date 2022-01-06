@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 def get_time():
-    return str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    return str(datetime.now().strftime("%Y-%m-%d %H_%M_%S"))
 
 def save_data(data, filename):
     # get parent home directory
