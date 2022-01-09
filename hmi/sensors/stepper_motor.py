@@ -6,7 +6,7 @@ class Stepper_Motor:
     __REVOLUTIONS = 398.93  # number of steps per revolution
     __JOG_FREQ = 10 # 10 Hz
 
-    def __init__(self, addr=0, channel=1):
+    def __init__(self, addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
         self.addr = addr
         self.channel = channel
         self.ch_mult = 100
@@ -16,6 +16,20 @@ class Stepper_Motor:
         self.set_square_wave()
         self.set_level(self.level)
         self.stop()
+        self.drive_fault_pin = drive_fault_pin
+        self.e_stop_pin = e_stop_pin
+    
+    def get_frequency(self):
+        try:
+            return DAQC2.getFREQ(0)
+        except Exception:
+            return 0.0
+
+    def is_drive_fault_active(self):
+        return DAQC2.getDINbit(self.addr, self.drive_fault_pin)
+
+    def is_e_stop_active(self):
+        return DAQC2.getDINbit(self.addr, self.e_stop_pin)
 
     def get_torque(self) -> float:
         try:
@@ -98,5 +112,6 @@ class Stepper_Motor:
 
     def __destroy__(self):
         self.stop()
+
 
 
