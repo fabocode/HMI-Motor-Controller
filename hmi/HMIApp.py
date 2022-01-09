@@ -17,8 +17,6 @@ from sensors.stepper_motor import Stepper_Motor
 import time
 import excel
 import re
-from threading import Thread
-from multiprocessing import Process
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
@@ -77,22 +75,6 @@ class Main(Screen):
         self.seconds_counter = 0
         self.is_running = False
         self.is_stopped = False
-        self.torque_sensor_thread = Process(target=self.read_torque_data)
-        self.torque_sensor_thread.start()
-
-    def read_torque_data(self):
-        while True:
-            # self.torque_sensor_str = str(self.torque_sensor.read_torque())
-            print("running multiple processes")
-            if self.is_running:
-                # self.torque_sensor_str = str(self.torque_sensor.read_torque())
-                print(f'torque sensor: {self.stepper_motor.get_torque()}')
-
-            if self.is_stopped:
-                break
-            time.sleep(1)
-
-
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -135,22 +117,6 @@ class Main(Screen):
             if check:
                 self.rpm_input = round(float(text_input), 2)
                 self.is_rpm_input_valid = True
-            else:
-                self.is_rpm_input_valid = True
-                self.rpm_input = 0.0
-        else:
-            print("no valid input")
-            self.is_rpm_input_valid = True
-            self.rpm_input = 0.0
-
-        # update the RPM and blade tip velocity
-        if self.is_rpm_input_valid and not self.is_jogging:
-            self.is_rpm_input_valid = False # reset the input flag
-            self.stepper_motor.start()
-            self.stepper_motor.set_rpm(self.rpm_input)
-            print("start the motor")
-        
-        
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
@@ -203,6 +169,8 @@ class Main(Screen):
             self.add_data(self.get_time(), 'Start Time')
             self.start_time_str = self.get_time()
             self.end_time_str = str("HH:MM:SS - M/D/Y")
+            if self.rpm_input != 0:
+                self.is_rpm_input_valid = True
         else:
             # if test name is not empty, save the data to the excel file
             if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
@@ -216,6 +184,9 @@ class Main(Screen):
                 self.data = self.clear_data()
                 self.current_rpm_str = "0.0"
                 self.blade_tip_velocity_str = "0.0"
+                self.total_revolution_str = "0.0"
+                # if self.rpm_input == 0:
+                #     self.is_rpm_input_valid = False
                 self.seconds_counter = 0
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
@@ -245,9 +216,7 @@ class Main(Screen):
 
         self.control_status_bar()   # update the status bar
 
-        # torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
-        # torque_data = self.stepper_motor.get_torque()   # get the torque data from the torque sensor
-        torque_data = 0.0
+        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
         
         
@@ -269,11 +238,11 @@ class Main(Screen):
             self.data['Total Revolution'].append(self.total_revolution_str)
 
             # # update the RPM and blade tip velocity
-            # if self.is_rpm_input_valid and not self.is_jogging:
-            #     self.is_rpm_input_valid = False # reset the input flag
-            #     self.stepper_motor.start()
-            #     self.stepper_motor.set_rpm(self.rpm_input)
-            #     print("start the motor")
+            if self.is_rpm_input_valid and not self.is_jogging:
+                self.is_rpm_input_valid = False # reset the input flag
+                self.stepper_motor.start()
+                self.stepper_motor.set_rpm(self.rpm_input)
+                print("start the motor here")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
