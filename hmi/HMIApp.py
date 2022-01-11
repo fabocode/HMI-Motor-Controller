@@ -37,9 +37,13 @@ class Main(Screen):
     start_time_str          = StringProperty('')
     end_time_str            = StringProperty('')
     blade_tip_velocity_str  = StringProperty('')
-    total_revolution_str   = StringProperty('')
+    total_revolution_str    = StringProperty('')
     current_rpm_str         = StringProperty('')
+    motor_drive_fault_str   = StringProperty('')
+    e_stop_active_str       = StringProperty('')
     run_button_color        = ListProperty([1, 1, 1, 1])
+    motor_drive_fault_color = ListProperty([0, 0, 0, 1])
+    e_stop_active_color     = ListProperty([0, 0, 0, 1])
 
     def __init__(self, **kwargs):
         super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
@@ -75,6 +79,15 @@ class Main(Screen):
         self.seconds_counter = 0
         self.is_running = False
         self.is_stopped = False
+        self.motor_drive_fault_str   = ''
+        self.e_stop_active_str       = ''
+
+        self.toggle_motor_drive_fault = False
+        self.toggle_e_stop_active = False
+        self.rpms = [0,0,0,0,0,0,0,0,0,0]
+        self.rpm_average = 0
+        self.motor_drive_fault_lock = False
+        self.e_stop_active_lock = False
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -207,25 +220,82 @@ class Main(Screen):
 
     def get_time_format(self, sec):
         return time.strftime("%H:%M:%S", time.gmtime(sec))
-        
+
+    def get_rpm(self):
+        if self.is_system_running:
+            return self.stepper_motor.get_rpm()
+        else:
+            return 0
+
+    def motor_drive_fault_alarm(self):
+        # toggling errors
+        if not self.toggle_motor_drive_fault:
+            self.toggle_motor_drive_fault = not self.toggle_motor_drive_fault
+            self.motor_drive_fault_color = [1, 0, 0, 1]
+            self.motor_drive_fault_str = "Motor Drive Fault"
+        else:
+            self.toggle_motor_drive_fault = not self.toggle_motor_drive_fault
+            self.motor_drive_fault_color = [0, 0, 0, 1]
+            # self.motor_drive_fault_str = ""
+    
+    def e_stop_active_alarm(self):
+        # toggling errors
+        if not self.toggle_e_stop_active:
+            self.toggle_e_stop_active = not self.toggle_e_stop_active
+            self.e_stop_active_color = [1, 0, 0, 1]
+            self.e_stop_active_str = "E-Stop Active"
+        else:
+            self.toggle_e_stop_active = not self.toggle_e_stop_active
+            self.e_stop_active_color = [0, 0, 0, 1]
+            # self.motor_drive_fault_str = ""
+
     # Callback functions for the periodic task
     def update_callback(self, dt):
         ''' Callback function for the periodic task '''
-        if self.is_jogging:
+        self.rpms.insert(0, self.get_rpm())
+        self.rpms.pop()
+        self.rpm_average = int(sum(self.rpms)/len(self.rpms))
+
+
+        if self.is_jogging and not self.is_system_running:
             self.stepper_motor.jog()
 
         self.control_status_bar()   # update the status bar
 
         torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
         self.torque_sensor_str = str(torque_data)
-        
-        
         self.now = datetime.today() # get the current time
-
+        is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
+        is_e_stop_active = self.stepper_motor.is_e_stop_active()
+        
+        
+        if is_motor_fault_active:
+            self.motor_drive_fault_lock = True
+        else:
+            self.motor_drive_fault_lock = False
+            
+        if self.motor_drive_fault_lock:
+            self.motor_drive_fault_alarm()
+        else:
+            self.toggle_motor_drive_fault = False
+            self.motor_drive_fault_color = [0, 0, 0, 1]
+            self.motor_drive_fault_str = ""
+        
+        if is_e_stop_active:
+            self.e_stop_active_lock = True 
+        else:
+            self.e_stop_active_lock = False 
+        if self.e_stop_active_lock:
+            self.e_stop_active_alarm()
+        else:
+            self.toggle_e_stop_active = False
+            self.e_stop_active_color = [0, 0, 0, 1]
+            self.e_stop_active_str = ""
+        
         if self.is_system_running():    # if system is running and no faults are detected
             self.is_running = True      # set the running flag to True
             self.seconds_counter += 1
-            self.current_rpm_str = str(self.rpm_input)
+            self.current_rpm_str = str(self.rpm_average)
             self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
             self.total_revolution = self.get_total_revolution(self.rpm_input)
             self.total_revolution_str = str(self.total_revolution)
@@ -246,8 +316,6 @@ class Main(Screen):
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
-            # self.stepper_motor.stop()
-            print("stop motor")
             
 
     # callback function for the date update    

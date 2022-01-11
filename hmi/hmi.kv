@@ -23,7 +23,6 @@ WindowManager:
     test_name_text_input: test_name_id
     canvas.before:
         Color:
-
             rgba: 0,0,0,0
         Rectangle:
             pos: self.pos
@@ -39,10 +38,27 @@ WindowManager:
                 font_size: 70
                 markup: True
                 size_hint_y: 0.5
+            
+
             BoxLayout:
                 orientation: "horizontal"
                 BoxLayout:
                     orientation: "vertical"
+                    BoxLayout:
+                        orientation:'horizontal'
+                        size_hint_y: 0.5
+                        Label:
+                            id: motor_drive_fault_id
+                            # text: "[b]Motor Drive Fault[/b]"
+                            text: "[b]{}[/b]".format(root.motor_drive_fault_str)
+                            font_size: 20
+                            markup: True
+                            canvas.before:
+                                Color:
+                                    rgba: root.motor_drive_fault_color
+                                Rectangle:
+                                    pos: self.pos
+                                    size: self.size
                     Label:
                         id: rpm_set_point_id
                         text: "[b]RPM Set Point[/b]"
@@ -69,6 +85,21 @@ WindowManager:
                     orientation: "vertical"
                     BoxLayout:
                         orientation: "vertical"
+                        BoxLayout:
+                            orientation:'horizontal'
+                            Label:
+                                id: e_stop_active_id
+                                # text: "[b]E-Stop Active[/b]"
+                                text: "[b]{}[/b]".format(root.e_stop_active_str)
+                                font_size: 20
+                                markup: True
+                                canvas.before:
+                                    Color:
+                                        rgba: root.e_stop_active_color
+                                    Rectangle:
+                                        pos: self.pos
+                                        size: self.size
+                                
                         Label:
                             id: start_time_label_id
                             text: "[b]Start Time[/b]"

@@ -3,10 +3,11 @@ import time
 
 class Stepper_Motor:
 
-    __REVOLUTIONS = 398.93  # number of steps per revolution
+    __REVOLUTIONS = 400.0  # number of steps per revolution
     __JOG_FREQ = 10 # 10 Hz
 
-    def __init__(self, addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
+    def __init__(self, motor_addr=1, addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
+        self.motor_addr = motor_addr
         self.addr = addr
         self.channel = channel
         self.ch_mult = 100
@@ -20,16 +21,19 @@ class Stepper_Motor:
         self.e_stop_pin = e_stop_pin
     
     def get_frequency(self):
-        try:
-            return DAQC2.getFREQ(0)
-        except Exception:
-            return 0.0
+        return DAQC2.getFREQ(1)
 
     def is_drive_fault_active(self):
-        return DAQC2.getDINbit(self.addr, self.drive_fault_pin)
+        if DAQC2.getDINbit(self.addr, self.drive_fault_pin):
+            return False
+        else:
+            return True
 
     def is_e_stop_active(self):
-        return DAQC2.getDINbit(self.addr, self.e_stop_pin)
+        if DAQC2.getDINbit(self.addr, self.e_stop_pin):
+            return False
+        else:
+            return True
 
     def get_torque(self) -> float:
         try:
@@ -41,7 +45,7 @@ class Stepper_Motor:
 
     def set_square_wave(self):
         try:
-            DAQC2.fgTYPE(self.addr, self.channel, self.type)
+            DAQC2.fgTYPE(self.motor_addr, self.channel, self.type)
         except:
             # print("Error: Frequency sensor not connected")
             pass 
@@ -49,26 +53,26 @@ class Stepper_Motor:
     def set_level(self, level):
         try:
             self.level = level
-            DAQC2.fgLEVEL(self.addr, self.channel, self.level)
+            DAQC2.fgLEVEL(self.motor_addr, self.channel, self.level)
         except:
             # print("Error: Frequency sensor not connected")
             pass
 
     def start(self):
         try:
-            DAQC2.fgON(self.addr, self.channel)
-            DAQC2.fgTYPE(self.addr, self.channel, self.type)
-            DAQC2.fgLEVEL(self.addr, self.channel, self.level)
+            DAQC2.fgON(self.motor_addr, self.channel)
+            DAQC2.fgTYPE(self.motor_addr, self.channel, self.type)
+            DAQC2.fgLEVEL(self.motor_addr, self.channel, self.level)
         except:
             # print("Error: Frequency sensor not connected")
             pass
     
     def jog(self):
         try:
-            DAQC2.fgON(self.addr, self.channel)
-            DAQC2.fgTYPE(self.addr, self.channel, self.type)
-            DAQC2.fgLEVEL(self.addr, self.channel, self.level)
-            DAQC2.fgFREQ(self.addr, self.channel, 10)
+            DAQC2.fgON(self.motor_addr, self.channel)
+            DAQC2.fgTYPE(self.motor_addr, self.channel, self.type)
+            DAQC2.fgLEVEL(self.motor_addr, self.channel, self.level)
+            DAQC2.fgFREQ(self.motor_addr, self.channel, 10)
         except:
             # print("Error: Frequency sensor not connected")
             pass
@@ -76,9 +80,9 @@ class Stepper_Motor:
 
     def update_freq(self, freq):
         try:
-            DAQC2.fgTYPE(self.addr, self.channel, self.type)
-            DAQC2.fgLEVEL(self.addr, self.channel, self.level)
-            DAQC2.fgFREQ(self.addr, self.channel, freq)
+            DAQC2.fgTYPE(self.motor_addr, self.channel, self.type)
+            DAQC2.fgLEVEL(self.motor_addr, self.channel, self.level)
+            DAQC2.fgFREQ(self.motor_addr, self.channel, freq)
         except:
             # print("Error: Frequency sensor not connected")
             pass
@@ -96,16 +100,14 @@ class Stepper_Motor:
         self.update_freq(self.freq)
         return self.freq
     
-    def get_frequency(self):
-        try:
-            return abs(DAQC2.getFREQ(0))
-        except:
-            print("Error: Frequency sensor not connected")
-            return 0.0
+    def get_rpm(self):
+        freq = self.get_frequency()
+        rpm = int((freq * 60.0)/1000)
+        return rpm
 
     def stop(self):
         try:
-            DAQC2.fgOFF(self.addr, self.channel)
+            DAQC2.fgOFF(self.motor_addr, self.channel)
         except:
             # print("Error: Frequency sensor not connected")
             pass
