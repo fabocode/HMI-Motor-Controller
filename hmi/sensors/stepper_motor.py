@@ -1,4 +1,3 @@
-from csv import excel_tab
 import piplates.DAQC2plate as DAQC2
 import time 
 
