@@ -8,6 +8,7 @@ except Exception:
     print("Another instance is running,  quitting.")
     sys.exit(-1)
 
+import piplates.DAQC2plate as DAQC2
 import kivy
 kivy.require('2.0.0') # replace with your current kivy version !
 from kivy.app import App
@@ -157,7 +158,7 @@ class Main(Screen):
     def on_stop_jog(self):
         ''' Event handler for the stop jog button '''
         if not self.is_system_running():
-            # self.stepper_motor.stop()
+            self.stepper_motor.stop()
             self.is_jogging = False
         #     self.run_button_color = [1, 0, 0, 1]
         # else:
@@ -237,6 +238,12 @@ class Main(Screen):
         else:
             return 0
 
+    def get_torque_data_str(self):
+        if self.toggle_e_stop_active and self.e_stop_active_lock:
+            return "0.0"
+        else:
+            return str(self.torque_sensor.get_torque())
+
     def motor_drive_fault_alarm(self):
         # toggling errors
         if not self.toggle_motor_drive_fault:
@@ -267,16 +274,19 @@ class Main(Screen):
         self.rpm_average = int(sum(self.rpms)/len(self.rpms))
 
 
-        if self.is_jogging and not self.is_system_running:
+        if self.is_jogging and not self.is_system_running():
+        # if self.is_jogging:
             self.stepper_motor.jog()
+            print(f"jogging - system running {self.is_system_running()}")
 
         self.control_status_bar()   # update the status bar
 
-        torque_data = self.torque_sensor.get_torque()   # get the torque data from the torque sensor
-        self.torque_sensor_str = str(torque_data)
+        torque_data = self.stepper_motor.get_torque()   # get the torque data from the torque sensor
+        # self.torque_sensor_str = str(torque_data)
         self.now = datetime.today() # get the current time
         is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
         is_e_stop_active = self.stepper_motor.is_e_stop_active()
+        print(f"is_motor_fault_active {is_motor_fault_active} is_e_stop_active {is_e_stop_active}")
         
         
         if is_motor_fault_active:
@@ -297,18 +307,25 @@ class Main(Screen):
             self.e_stop_active_lock = False 
         if self.e_stop_active_lock:
             self.e_stop_active_alarm()
+            self.torque_sensor_str = "0.0"
         else:
             self.toggle_e_stop_active = False
             self.e_stop_active_color = [0, 0, 0, 1]
             self.e_stop_active_str = ""
+            self.torque_sensor_str = str(torque_data)
         
         if self.is_system_running():    # if system is running and no faults are detected
             self.is_running = True      # set the running flag to True
             self.seconds_counter += 1
-            self.current_rpm_str = str(self.rpm_average)
-            self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
-            self.total_revolution = self.get_total_revolution(self.rpm_input)
-            self.total_revolution_str = str(self.total_revolution)
+            if self.e_stop_active_lock:
+                self.current_rpm_str = "0.0"
+                self.blade_tip_velocity_str = "0.0"
+                self.total_revolution_str = "0.0"
+            else:
+                self.current_rpm_str = str(self.rpm_average)
+                # self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+                # self.total_revolution = self.get_total_revolution(self.rpm_input)
+                # self.total_revolution_str = str(self.total_revolution)
             self.timestamp_str = self.get_time_format(self.seconds_counter)
             self.data['Elapsed Time'].append(self.timestamp_str)
             self.data['Time Stamps'].append(self.get_time())
@@ -327,11 +344,9 @@ class Main(Screen):
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
             
-
     # callback function for the date update    
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
-
 
 # screen manager
 class WindowManager(ScreenManager):
@@ -346,5 +361,10 @@ class HMI_Motor(App):
     def build(self):
         return kv
 
+    def on_stop(self):
+        DAQC2.fgOFF(1, 1)
+
 if __name__ == '__main__':
+
     HMI_Motor().run()
+
