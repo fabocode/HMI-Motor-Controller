@@ -1,3 +1,4 @@
+from csv import excel_tab
 import piplates.DAQC2plate as DAQC2
 import time 
 
@@ -21,19 +22,28 @@ class Stepper_Motor:
         self.e_stop_pin = e_stop_pin
     
     def get_frequency(self):
-        return DAQC2.getFREQ(1)
+        try:
+            return DAQC2.getFREQ(1)
+        except Exception:
+            return 0
 
     def is_drive_fault_active(self):
-        if DAQC2.getDINbit(self.addr, self.drive_fault_pin):
+        try:
+            if DAQC2.getDINbit(self.addr, self.drive_fault_pin):
+                return False
+            else:
+                return True
+        except Exception:
             return False
-        else:
-            return True
 
     def is_e_stop_active(self):
-        if DAQC2.getDINbit(self.addr, self.e_stop_pin):
+        try:
+            if DAQC2.getDINbit(self.addr, self.e_stop_pin):
+                return False
+            else:
+                return True
+        except Exception:
             return False
-        else:
-            return True
 
     def get_torque(self) -> float:
         try:
