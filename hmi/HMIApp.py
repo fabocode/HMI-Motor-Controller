@@ -1,3 +1,13 @@
+from tendo import singleton # import module to avoid multiple apps running at the same time
+import sys
+
+# create an only single instance, if there's a instance already running, don't create another and exit the program.
+try:
+    me = singleton.SingleInstance() 
+except Exception:
+    print("Another instance is running,  quitting.")
+    sys.exit(-1)
+
 import kivy
 kivy.require('2.0.0') # replace with your current kivy version !
 from kivy.app import App
