@@ -23,7 +23,6 @@ from screeninfo import get_monitors
 from datetime import date, datetime, timedelta
 from timeit import default_timer as timer
 from HMIConfig import HMI_Config
-from sensors.torque import Torque_Sensor
 from sensors.stepper_motor import Stepper_Motor
 import time
 import excel
@@ -73,7 +72,6 @@ class Main(Screen):
         self.past = datetime.today()
         self.past_time = 0
         self.excel              = excel # create an instance of the excel module to save the data
-        self.torque_sensor      = Torque_Sensor() # create an instance of the torque sensor (address 0, channel 0)
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
@@ -239,10 +237,11 @@ class Main(Screen):
             return 0
 
     def get_torque_data_str(self):
+        # print(f"get_torque {self.stepper_motor.get_torque()} {self.toggle_e_stop_active} {self.e_stop_active_lock}")
         if self.toggle_e_stop_active and self.e_stop_active_lock:
             return "0.0"
         else:
-            return str(self.torque_sensor.get_torque())
+            return str(self.stepper_motor.get_torque())
 
     def motor_drive_fault_alarm(self):
         # toggling errors
@@ -296,6 +295,7 @@ class Main(Screen):
             
         if self.motor_drive_fault_lock:
             self.motor_drive_fault_alarm()
+            self.torque_sensor_str = "0.0"
         else:
             self.toggle_motor_drive_fault = False
             self.motor_drive_fault_color = [0, 0, 0, 1]
@@ -305,6 +305,7 @@ class Main(Screen):
             self.e_stop_active_lock = True 
         else:
             self.e_stop_active_lock = False 
+
         if self.e_stop_active_lock:
             self.e_stop_active_alarm()
             self.torque_sensor_str = "0.0"
@@ -317,15 +318,15 @@ class Main(Screen):
         if self.is_system_running():    # if system is running and no faults are detected
             self.is_running = True      # set the running flag to True
             self.seconds_counter += 1
-            if self.e_stop_active_lock:
+            if self.e_stop_active_lock or self.motor_drive_fault_lock:
                 self.current_rpm_str = "0.0"
                 self.blade_tip_velocity_str = "0.0"
                 self.total_revolution_str = "0.0"
             else:
                 self.current_rpm_str = str(self.rpm_average)
-                # self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
-                # self.total_revolution = self.get_total_revolution(self.rpm_input)
-                # self.total_revolution_str = str(self.total_revolution)
+                self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
+                self.total_revolution = self.get_total_revolution(self.rpm_input)
+                self.total_revolution_str = str(self.total_revolution)
             self.timestamp_str = self.get_time_format(self.seconds_counter)
             self.data['Elapsed Time'].append(self.timestamp_str)
             self.data['Time Stamps'].append(self.get_time())
@@ -365,6 +366,8 @@ class HMI_Motor(App):
         DAQC2.fgOFF(1, 1)
 
 if __name__ == '__main__':
-
-    HMI_Motor().run()
+    try:
+        HMI_Motor().run()
+    finally:
+        HMI_Motor().on_stop()
 
