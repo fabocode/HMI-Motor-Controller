@@ -6,9 +6,10 @@ class Stepper_Motor:
     __REVOLUTIONS = 400.0  # number of steps per revolution
     __JOG_FREQ = 10 # 10 Hz
 
-    def __init__(self, motor_addr=1, addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
+    def __init__(self, motor_addr=1, addr=0, torque_addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
         self.motor_addr = motor_addr
         self.addr = addr
+        self.torque_addr = torque_addr
         self.channel = channel
         self.ch_mult = 100
         self.freq = 10
@@ -46,7 +47,7 @@ class Stepper_Motor:
 
     def get_torque(self) -> float:
         try:
-            Nm = abs(round(DAQC2.getADC(self.addr, self.channel) * 0.05, 4))
+            Nm = abs(round(DAQC2.getADC(self.addr, self.torque_addr) * 0.05, 4))
             return Nm
         except:
             print("Error: Torque sensor not connected")
@@ -123,6 +124,3 @@ class Stepper_Motor:
 
     def __destroy__(self):
         self.stop()
-
-
-
