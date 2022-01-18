@@ -106,7 +106,6 @@ class Stepper_Motor:
         elif self.freq >= 10000:
             self.freq = 10000
 
-        print("Frequency: ", self.freq)
         self.update_freq(self.freq)
         return self.freq
     
