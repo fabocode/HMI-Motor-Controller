@@ -285,7 +285,6 @@ class Main(Screen):
         self.now = datetime.today() # get the current time
         is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
         is_e_stop_active = self.stepper_motor.is_e_stop_active()
-        print(f"is_motor_fault_active {is_motor_fault_active} is_e_stop_active {is_e_stop_active}")
         
         
         if is_motor_fault_active:
@@ -324,8 +323,8 @@ class Main(Screen):
                 self.total_revolution_str = "0.0"
             else:
                 self.current_rpm_str = str(self.rpm_average)
-                self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_input)
-                self.total_revolution = self.get_total_revolution(self.rpm_input)
+                self.blade_tip_velocity_str = self.get_blade_tip_velocity(self.rpm_average)
+                self.total_revolution = self.get_total_revolution(self.rpm_average)
                 self.total_revolution_str = str(self.total_revolution)
             self.timestamp_str = self.get_time_format(self.seconds_counter)
             self.data['Elapsed Time'].append(self.timestamp_str)
