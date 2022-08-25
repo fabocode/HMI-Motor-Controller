@@ -194,22 +194,21 @@ class Main(Screen):
             if self.rpm_input != 0:
                 self.is_rpm_input_valid = True
         else:
-            # if test name is not empty, save the data to the excel file
-            if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
-                # save data into excel file and clear the data dictionary
-                self.stepper_motor.stop()
-                self.data['Notes'].append(self.notes_str)
-                self.add_data(self.get_time(), 'Stop Time')
-                self.end_time_str = self.get_time()
-                filename = config.get_path_to_save(self.test_name_str)
-                self.excel.save_data(self.data, filename)
-                self.data = self.clear_data()
-                self.current_rpm_str = "0.0"
-                self.blade_tip_velocity_str = "0.0"
-                self.total_revolution_str = "0.0"
-                # if self.rpm_input == 0:
-                #     self.is_rpm_input_valid = False
-                self.seconds_counter = 0
+            # save the data to the excel file
+            # save data into excel file and clear the data dictionary
+            self.stepper_motor.stop()
+            self.data['Notes'].append(self.notes_str)
+            self.add_data(self.get_time(), 'Stop Time')
+            self.end_time_str = self.get_time()
+            filename = config.get_path_to_save(self.test_name_str)
+            self.excel.save_data(self.data, filename)
+            self.data = self.clear_data()
+            self.current_rpm_str = "0.0"
+            self.blade_tip_velocity_str = "0.0"
+            self.total_revolution_str = "0.0"
+            # if self.rpm_input == 0:
+            #     self.is_rpm_input_valid = False
+            self.seconds_counter = 0
             self.run_button_str = 'START'
             self.ids['run_button_id'].background_color = [0, 1, 0, 1]
             self.clear_total_revolution()  # clear the total revolutions counter

@@ -11,9 +11,11 @@ def save_data(data, filename):
     # check if directory exists
     if not os.path.exists(parent_dir + '/mixer_data_recordings'):
         os.makedirs(parent_dir + '/mixer_data_recordings')
-
-
-    file_path_name = filename + '-' + get_time() + '.xlsx'
+    file_path_name = ''
+    if filename == '':
+        file_path_name = "mixer_test" + '-' + get_time() + '.xlsx'
+    else:
+        file_path_name = filename + '-' + get_time() + '.xlsx'
     workbook = xlsxwriter.Workbook(file_path_name)    # Create an new Excel file and add a worksheet.
     worksheet = workbook.add_worksheet()
 
