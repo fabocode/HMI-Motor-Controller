@@ -151,44 +151,6 @@ WindowManager:
             orientation: "vertical"
             BoxLayout:
                 orientation: "horizontal"
-                # TextInput:
-                #     id: test_name_id
-                #     hint_text: "Input \nTest Name"
-                #     multiline: False
-                #     markup: True
-                #     font_size: 30
-                #     halign: "center"
-                #     padding_y: [self.height / 3.0 - (self.line_height / 2.0) * len(self._lines), 0]
-                #     # on_focus: root.set_layout('qwerty')
-                #     on_focus: self.text = "" if self.focus else "{}".format(self.text)
-                #     on_text_validate: root.on_test_name_input(self.text)
-                # BoxLayout:
-                #     orientation: "vertical"
-                #     Label:
-                #         id: test_name_label_id
-                #         text: "[b]Test Name[/b]"
-                #         font_size: 20
-                #         markup: True
-                #     Label:
-                #         text: "[b]{}[/b]".format(root.test_name_str)
-                #         markup: True
-                #         font_size: 30
-            # Label:
-            #     id: notes_label_id
-            #     text: "[b]Notes[/b]"
-            #     font_size: 20
-            #     markup: True
-            #     size_hint_y: .3
-            # TextInput:
-            #     id: notes_input_id
-            #     hint_text: "Notes"
-            #     multiline: False
-            #     markup: True
-            #     font_size: 40
-            #     on_focus: self.text = "" if self.focus else "{}".format(self.text)
-            #     on_text_validate: root.on_notes_input(self.text)
-            BoxLayout:
-                orientation: "horizontal"
                 Label:
                     text: "[b]TORQUE (Nm)[/b]"
                     font_size: 30
