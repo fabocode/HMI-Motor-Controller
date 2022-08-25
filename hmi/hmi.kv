@@ -5,7 +5,7 @@ WindowManager:
     Main:
 
 <NameCheckPopup@Popup>:
-    auto_dismiss: False
+    auto_dismiss: True
     title: 'Check the name of the test'
     size_hint: .8, .3
     pos_hint: {'top': .9}
@@ -68,7 +68,7 @@ WindowManager:
                     TextInput:
                         id: rpm_set_point_text_input_id
                         hint_text: "(1.5 - 1500) RPM"
-                        font_size: 30
+                        font_size: 25
                         multiline: False
                         markup: True
                         halign: "center"
@@ -77,7 +77,7 @@ WindowManager:
                         on_text_validate: root.on_set_rpm_input(self.text)
                     Button:
                         text: "[b]Jog (rotate motor)[/b]"
-                        font_size: 30
+                        font_size: 25
                         markup: True
                         on_press: root.on_start_jog()
                         on_release: root.on_stop_jog()
@@ -180,6 +180,7 @@ WindowManager:
                 markup: True
                 size_hint_y: .3
             TextInput:
+                id: notes_input_id
                 hint_text: "Notes"
                 multiline: False
                 markup: True
