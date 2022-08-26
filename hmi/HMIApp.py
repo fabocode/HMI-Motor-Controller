@@ -179,8 +179,7 @@ class Main(Screen):
         return self.data 
 
     def add_data(self, data, label):
-        if self.test_name_str != '' and self.test_name_str != 'Test Name' and self.data['Time Stamps'] != ():
-            self.data[label].append(data)
+        self.data[label].append(data)
 
     def run_button_pressed(self):
         self.system_status = not self.system_status
