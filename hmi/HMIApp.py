@@ -269,7 +269,6 @@ class Main(Screen):
         self.rpms.pop()
         self.rpm_average = int(sum(self.rpms)/len(self.rpms))
 
-
         if self.is_jogging and not self.is_system_running():
         # if self.is_jogging:
             self.stepper_motor.jog()
@@ -308,6 +307,7 @@ class Main(Screen):
             self.toggle_e_stop_active = False
             self.e_stop_active_color = [0, 0, 0, 1]
             self.e_stop_active_str = ""
+            self.torque_sensor_str = str(torque_data)
 
         if self.is_system_running():    # if system is running and no faults are detected
             self.is_running = True      # set the running flag to True
