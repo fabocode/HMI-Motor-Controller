@@ -1,5 +1,5 @@
 import piplates.DAQC2plate as DAQC2
-import time 
+import time
 
 class Stepper_Motor:
 
@@ -20,7 +20,7 @@ class Stepper_Motor:
         self.stop()
         self.drive_fault_pin = drive_fault_pin
         self.e_stop_pin = e_stop_pin
-    
+
     def get_frequency(self):
         try:
             return DAQC2.getFREQ(1)
@@ -58,8 +58,8 @@ class Stepper_Motor:
             DAQC2.fgTYPE(self.motor_addr, self.channel, self.type)
         except:
             # print("Error: Frequency sensor not connected")
-            pass 
-    
+            pass
+
     def set_level(self, level):
         try:
             self.level = level
@@ -76,7 +76,7 @@ class Stepper_Motor:
         except:
             # print("Error: Frequency sensor not connected")
             pass
-    
+
     def jog(self):
         try:
             DAQC2.fgON(self.motor_addr, self.channel)
@@ -108,10 +108,10 @@ class Stepper_Motor:
 
         self.update_freq(self.freq)
         return self.freq
-    
+
     def get_rpm(self):
         freq = self.get_frequency()
-        rpm = int((freq * 60.0)/1000)
+        rpm = int((freq * 60.0)/1000)/10
         return rpm
 
     def stop(self):

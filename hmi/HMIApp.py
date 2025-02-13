@@ -3,7 +3,7 @@ import sys
 
 # create an only single instance, if there's a instance already running, don't create another and exit the program.
 try:
-    me = singleton.SingleInstance() 
+    me = singleton.SingleInstance()
 except Exception:
     print("Another instance is running,  quitting.")
     sys.exit(-1)
@@ -33,7 +33,7 @@ config = HMI_Config('config/hmi.yaml')
 screen_width = str(int(get_monitors()[0].width  * config.get_screen_fixed_size()))  # get the current screen size
 screen_height = str(int(get_monitors()[0].height * config.get_screen_fixed_size()))
 Config.set('graphics', 'width', screen_width)
-Config.set('graphics', 'height', screen_height)    
+Config.set('graphics', 'height', screen_height)
 Config.set('kivy', 'keyboard_mode', 'systemanddock')    # enable virtual keyboard on text input
 
 # main screen
@@ -162,7 +162,6 @@ class Main(Screen):
         # else:
         #     self.run_button_color = [0, 1, 0, 1]
 
-        
     def clear_data(self):
         ''' Clear the data dictionary '''
         self.data = {   # create a dictionary to store the data
@@ -176,7 +175,7 @@ class Main(Screen):
             'Total Revolution': [],
             'Notes': []
         }
-        return self.data 
+        return self.data
 
     def add_data(self, data, label):
         self.data[label].append(data)
@@ -213,7 +212,7 @@ class Main(Screen):
             self.clear_total_revolution()  # clear the total revolutions counter
             self.is_running = False
             # self.data['Stop Time'].append(self.get_time())
-    
+
     def get_blade_tip_velocity(self, rpm):
         rpm = float(rpm)
         return str(round( (27.33 * (rpm / 60.0)), 2))
@@ -251,7 +250,7 @@ class Main(Screen):
             self.toggle_motor_drive_fault = not self.toggle_motor_drive_fault
             self.motor_drive_fault_color = [0, 0, 0, 1]
             # self.motor_drive_fault_str = ""
-    
+
     def e_stop_active_alarm(self):
         # toggling errors
         if not self.toggle_e_stop_active:
@@ -270,7 +269,6 @@ class Main(Screen):
         self.rpms.pop()
         self.rpm_average = int(sum(self.rpms)/len(self.rpms))
 
-
         if self.is_jogging and not self.is_system_running():
         # if self.is_jogging:
             self.stepper_motor.jog()
@@ -283,13 +281,12 @@ class Main(Screen):
         self.now = datetime.today() # get the current time
         is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
         is_e_stop_active = self.stepper_motor.is_e_stop_active()
-        
-        
+
         if is_motor_fault_active:
             self.motor_drive_fault_lock = True
         else:
             self.motor_drive_fault_lock = False
-            
+
         if self.motor_drive_fault_lock:
             self.motor_drive_fault_alarm()
             self.torque_sensor_str = "0.0"
@@ -297,11 +294,11 @@ class Main(Screen):
             self.toggle_motor_drive_fault = False
             self.motor_drive_fault_color = [0, 0, 0, 1]
             self.motor_drive_fault_str = ""
-        
+
         if is_e_stop_active:
-            self.e_stop_active_lock = True 
+            self.e_stop_active_lock = True
         else:
-            self.e_stop_active_lock = False 
+            self.e_stop_active_lock = False
 
         if self.e_stop_active_lock:
             self.e_stop_active_alarm()
@@ -311,7 +308,7 @@ class Main(Screen):
             self.e_stop_active_color = [0, 0, 0, 1]
             self.e_stop_active_str = ""
             self.torque_sensor_str = str(torque_data)
-        
+
         if self.is_system_running():    # if system is running and no faults are detected
             self.is_running = True      # set the running flag to True
             self.seconds_counter += 1
@@ -341,8 +338,8 @@ class Main(Screen):
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
-            
-    # callback function for the date update    
+
+    # callback function for the date update
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
@@ -350,7 +347,7 @@ class Main(Screen):
 class WindowManager(ScreenManager):
     pass
 
-# designate our .kv design file 
+# designate our .kv design file
 kv = Builder.load_file("hmi.kv")
 
 
