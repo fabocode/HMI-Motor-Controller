@@ -22,7 +22,7 @@ WindowManager:
                 font_size: 70
                 markup: True
                 size_hint_y: 0.5
-            
+
 
             BoxLayout:
                 orientation: "horizontal"
@@ -57,7 +57,7 @@ WindowManager:
                         markup: True
                         halign: "center"
                         padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
-                        input_type: 'number'    
+                        input_type: 'number'
                         on_text_validate: root.on_set_rpm_input(self.text)
                     Button:
                         text: "[b]Jog (rotate motor)[/b]"
@@ -83,7 +83,7 @@ WindowManager:
                                     Rectangle:
                                         pos: self.pos
                                         size: self.size
-                                
+
                         Label:
                             id: start_time_label_id
                             text: "[b]Start Time[/b]"
@@ -106,7 +106,6 @@ WindowManager:
                             text: "[b]{}[/b]".format(root.end_time_str)
                             font_size: 25
                             markup: True
-                        
 
             Label:
                 text: "[b]{}[/b]".format(root.status_bar_str)
@@ -171,16 +170,16 @@ WindowManager:
                 font_size: 40
                 on_focus: self.text = "" if self.focus else "{}".format(self.text)
                 on_text_validate: root.on_notes_input(self.text)
-            BoxLayout:
-                orientation: "horizontal"
-                Label:
-                    text: "[b]TORQUE (Nm)[/b]"
-                    font_size: 30
-                    markup: True
-                Label:
-                    text: "[b]{}[/b]".format(root.torque_sensor_str)
-                    font_size: 50
-                    markup: True
+            # BoxLayout:
+            #     orientation: "horizontal"
+            #     Label:
+            #         text: "[b]TORQUE (Nm)[/b]"
+            #         font_size: 30
+            #         markup: True
+            #     Label:
+            #         text: "[b]{}[/b]".format(root.torque_sensor_str)
+            #         font_size: 50
+            #         markup: True
             BoxLayout:
                 orientation: "horizontal"
                 Label:
