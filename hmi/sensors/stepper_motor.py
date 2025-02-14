@@ -3,8 +3,8 @@ import time
 
 class Stepper_Motor:
 
-    __REVOLUTIONS = 400.0  # number of steps per revolution
-    __JOG_FREQ = 10 # 10 Hz
+    __REVOLUTIONS = 10 * 400.0  # number of steps per revolution
+    __JOG_FREQ = 10 * 10 # 10 Hz
 
     def __init__(self, motor_addr=1, addr=0, torque_addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
         self.motor_addr = motor_addr
