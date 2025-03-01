@@ -16,7 +16,7 @@ from kivy.uix.label import Label
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty, NumericProperty, StringProperty
+from kivy.properties import ObjectProperty, NumericProperty, StringProperty, BooleanProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
 from screeninfo import get_monitors
@@ -54,6 +54,7 @@ class Main(Screen):
     run_button_color        = ListProperty([1, 1, 1, 1])
     motor_drive_fault_color = ListProperty([0, 0, 0, 1])
     e_stop_active_color     = ListProperty([0, 0, 0, 1])
+    toggle_button_mode_id   = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(Main, self).__init__(**kwargs)    # call the super class constructor (Screen)
@@ -342,6 +343,12 @@ class Main(Screen):
     # callback function for the date update
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
+
+    def toggle_pressed_button(self):
+        print("pressed")
+    
+    def toggle_unpressed_button(self):
+        print("unpressed")
 
 # screen manager
 class WindowManager(ScreenManager):
