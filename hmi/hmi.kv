@@ -183,6 +183,21 @@ WindowManager:
             BoxLayout:
                 orientation: "horizontal"
                 Label:
+                    text: "[b]ORIENTATION[/b]"
+                    font_size: 30
+                    markup: True
+                ToggleButton:
+                    id: toggle_button_mode_id
+                    text: "[b]Clockwise[/b]"
+                    background_disabled_down: ('0.00.00,000')
+                    font_size: 25
+                    markup: True
+                    on_state: toggle_button_mode_id.text = "[b]Counter-clockwise[/b]" if self.state == 'down' else '[b]Clockwise[/b]'
+                    on_state: root.toggle_pressed_button() if self.state == 'down' else root.toggle_unpressed_button()
+
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
                     text: "[b]Blade Tip \nVelocity (cm/sec)[/b]"
                     text_size: self.size
                     font_size: 30
