@@ -7,7 +7,7 @@ class Stepper_Motor:
     __REVOLUTIONS = 10 * 400.0  # number of steps per revolution
     __JOG_FREQ = 10 * 10 * 10
 
-    def __init__(self, motor_addr=1, addr=0, torque_addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1):
+    def __init__(self, motor_addr=1, addr=0, torque_addr=0, channel=1, drive_fault_pin=0, e_stop_pin=1, clockwise_pin=0):
         self.motor_addr = motor_addr
         self.addr = addr
         self.torque_addr = torque_addr
@@ -19,6 +19,7 @@ class Stepper_Motor:
         self.level = 4            # 1:1
         self.drive_fault_pin = drive_fault_pin
         self.e_stop_pin = e_stop_pin
+        self.clockwise_pin = clockwise_pin
 
         # Parameters for background ramping
         self._ramp_delay = 0.02   # seconds per update step
@@ -44,6 +45,18 @@ class Stepper_Motor:
                 self.freq = max(self.freq - self._ramp_rate, self._target_freq)
                 self.update_freq(self.freq)
             time.sleep(self._ramp_delay)
+
+    def set_clockwise(self):
+        try:
+            DAQC2.setDOUTbit(self.addr, self.clockwise_pin)
+        except Exception:
+            pass
+
+    def clear_clockwise(self):
+        try:
+            DAQC2.clrDOUTbit(self.addr, self.clockwise_pin)
+        except Exception:
+            pass
 
     def get_frequency(self):
         try:
