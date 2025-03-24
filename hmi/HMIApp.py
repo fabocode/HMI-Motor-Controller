@@ -98,6 +98,8 @@ class Main(Screen):
         self.rpm_average = 0
         self.motor_drive_fault_lock = False
         self.e_stop_active_lock = False
+        self.pending_orientation_change = False
+        self.desired_orientation = "clockwise"
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -340,17 +342,47 @@ class Main(Screen):
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
             self.past = datetime.today()    # get the current time
 
+        # --- Orientation Change Handling ---
+        if self.pending_orientation_change:
+            # If the system is running, we need to change orientation safely.
+            if self.is_system_running():
+                # Check if the motor has stopped (for example, motor_stopped flag or frequency near stop level).
+                # Here we check the frequency.
+                if abs(self.stepper_motor.freq - 10) > 0.1:  
+                    # If motor has not fully stopped, issue a stop command with a shorter ramp time.
+                    self.stepper_motor.stop(ramp_time=0.5)
+                else:
+                    # Motor is stopped, so update the orientation.
+                    if self.desired_orientation == "clockwise":
+                        self.stepper_motor.set_clockwise()
+                    else:
+                        self.stepper_motor.clear_clockwise()
+                    # Restart the motor with the previous RPM using a faster ramp-up time.
+                    self.stepper_motor.start()
+                    self.stepper_motor.ramp_to_rpm(self.rpm_input, ramp_time=1.0)
+                    # Clear the flag so this sequence is executed only once.
+                    self.pending_orientation_change = False
+            else:
+                # If system is not running, just update the orientation.
+                if self.desired_orientation == "clockwise":
+                    self.stepper_motor.set_clockwise()
+                else:
+                    self.stepper_motor.clear_clockwise()
+                self.pending_orientation_change = False
+
     # callback function for the date update
     def update_callback_date(self, dt):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
     def toggle_pressed_button(self):
-        # set clockwise direction
-        self.stepper_motor.set_clockwise()
+        # Request a change to clockwise rotation.
+        self.pending_orientation_change = True
+        self.desired_orientation = "clockwise"
 
     def toggle_unpressed_button(self):
-        # clear the clockwise direction
-        self.stepper_motor.clear_clockwise()
+        # Request a change to counterclockwise rotation.
+        self.pending_orientation_change = True
+        self.desired_orientation = "counterclockwise"
 
 # screen manager
 class WindowManager(ScreenManager):
