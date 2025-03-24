@@ -94,7 +94,7 @@ class Main(Screen):
 
         self.toggle_motor_drive_fault = False
         self.toggle_e_stop_active = False
-        self.rpms = [0,0,0,0,0,0,0,0,0,0]
+        self.rpms = [0,0,0]
         self.rpm_average = 0
         self.motor_drive_fault_lock = False
         self.e_stop_active_lock = False
@@ -334,7 +334,7 @@ class Main(Screen):
             if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
-                self.stepper_motor.set_rpm(self.rpm_input)
+                self.stepper_motor.ramp_to_rpm(self.rpm_input, ramp_time=2.0)
                 print("start the motor here")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
