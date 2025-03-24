@@ -345,10 +345,12 @@ class Main(Screen):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
     def toggle_pressed_button(self):
-        print("pressed")
-    
+        # set clockwise direction
+        self.stepper_motor.set_clockwise()
+
     def toggle_unpressed_button(self):
-        print("unpressed")
+        # clear the clockwise direction
+        self.stepper_motor.clear_clockwise()
 
 # screen manager
 class WindowManager(ScreenManager):
