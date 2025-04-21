@@ -150,20 +150,13 @@ class Main(Screen):
     def on_start_jog(self):
         ''' Event handler for the start jog button '''
         if not self.is_system_running():
-            # self.stepper_motor.start_jog()
             self.is_jogging = True
-        #     self.run_button_color = [0, 1, 0, 1]
-        # else:
-        #     self.run_button_color = [1, 0, 0, 1]
 
     def on_stop_jog(self):
         ''' Event handler for the stop jog button '''
         if not self.is_system_running():
             self.stepper_motor.stop()
             self.is_jogging = False
-        #     self.run_button_color = [1, 0, 0, 1]
-        # else:
-        #     self.run_button_color = [0, 1, 0, 1]
 
     def clear_data(self):
         ''' Clear the data dictionary '''
@@ -233,8 +226,7 @@ class Main(Screen):
     def get_rpm(self):
         if self.is_system_running:
             return self.stepper_motor.get_rpm()
-        else:
-            return 0
+        return 0
 
     def get_torque_data_str(self):
         # print(f"get_torque {self.stepper_motor.get_torque()} {self.toggle_e_stop_active} {self.e_stop_active_lock}")
@@ -268,6 +260,33 @@ class Main(Screen):
     # Callback functions for the periodic task
     def update_callback(self, dt):
         ''' Callback function for the periodic task '''
+        # --- Emergency‑Stop Handling ---
+        is_e_stop_active = self.stepper_motor.is_e_stop_active()
+        if is_e_stop_active:
+            # first time we detect E‑stop: kill motor and flip UI back to “START”
+            if not self.e_stop_active_lock:
+                self.stepper_motor.stop()
+                self.system_status = False
+                self.is_running = False
+                self.is_jogging = False
+                self.run_button_str = 'START'
+                self.ids['run_button_id'].background_color = [0, 1, 0, 1]
+            self.e_stop_active_lock = True
+            self.e_stop_active_alarm()
+            # force torque/RPM to zero
+            self.torque_sensor_str = "0.0"
+            # skip the rest of the loop so we don’t inadvertently restart
+            return
+        else:
+            # E‑stop has been released; clear lock but stay stopped
+            if self.e_stop_active_lock:
+                self.e_stop_active_lock = False
+            # reset UI alarm bits
+            self.toggle_e_stop_active = False
+            self.e_stop_active_color = [0, 0, 0, 1]
+            self.e_stop_active_str = ""
+        # --- end E‑Stop Handling ---
+
         self.rpms.insert(0, self.get_rpm())
         self.rpms.pop()
         self.rpm_average = int(sum(self.rpms)/len(self.rpms))
