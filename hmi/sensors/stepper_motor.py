@@ -87,9 +87,9 @@ class Stepper_Motor:
     def is_e_stop_active(self):
         try:
             if DAQC2.getDINbit(self.addr, self.e_stop_pin):
-                return False
-            else:
                 return True
+            else:
+                return False
         except Exception:
             return False
 
