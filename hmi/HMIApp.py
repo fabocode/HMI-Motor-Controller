@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.7
 from tendo import singleton # import module to avoid multiple apps running at the same time
 import sys
 

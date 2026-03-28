@@ -2,8 +2,8 @@ certifi==2021.10.8
 charset-normalizer==2.0.8
 docutils==0.18.1
 idna==3.3
-Kivy==2.0.0
-Kivy-examples==2.0.0
+Kivy
+Kivy-examples
 Kivy-Garden==0.1.4
 pbr==5.8.0
 pi-plates==8.0
@@ -11,7 +11,7 @@ Pillow==8.4.0
 Pygments==2.10.0
 PyYAML==6.0
 requests==2.26.0
-RPi.GPIO==0.7.0
+RPi.GPIO
 screeninfo==0.7
 six==1.16.0
 spidev==3.5
