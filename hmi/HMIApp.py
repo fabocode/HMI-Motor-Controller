@@ -205,7 +205,6 @@ class Main(Screen):
             self.current_rpm_str = "0.0"
             self.blade_tip_velocity_str = "0.0"
             self.total_revolution_str = "0.0"
-            self.weight_str = "0.0"
             # if self.rpm_input == 0:
             #     self.is_rpm_input_valid = False
             self.seconds_counter = 0
@@ -306,6 +305,7 @@ class Main(Screen):
 
         torque_data = self.stepper_motor.get_torque()   # get the torque data from the torque sensor
         # self.torque_sensor_str = str(torque_data)
+        self.weight_str = str(self.scale.get_weight())  # update weight display (always, not just when running)
         self.now = datetime.today() # get the current time
         is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
         is_e_stop_active = self.stepper_motor.is_e_stop_active()
@@ -356,7 +356,6 @@ class Main(Screen):
             self.data['Torque'].append(torque_data)
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
             self.data['Total Revolution'].append(self.total_revolution_str)
-            self.weight_str = str(self.scale.get_weight())
             self.data['Weight'].append(self.weight_str)
 
             # # update the RPM and blade tip velocity
