@@ -228,3 +228,13 @@ WindowManager:
                     text: "[b]{}[/b]".format(root.current_rpm_str)
                     font_size: 50
                     markup: True
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "[b]Weight (g)[/b]"
+                    font_size: 30
+                    markup: True
+                Label:
+                    text: "[b]{}[/b]".format(root.weight_str)
+                    font_size: 50
+                    markup: True

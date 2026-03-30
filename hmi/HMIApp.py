@@ -25,6 +25,7 @@ from datetime import date, datetime, timedelta
 from timeit import default_timer as timer
 from HMIConfig import HMI_Config
 from sensors.stepper_motor import Stepper_Motor
+from sensors.scale import Scale
 import time
 import excel
 import re
@@ -50,6 +51,7 @@ class Main(Screen):
     blade_tip_velocity_str  = StringProperty('')
     total_revolution_str    = StringProperty('')
     current_rpm_str         = StringProperty('')
+    weight_str              = StringProperty('0.0')
     motor_drive_fault_str   = StringProperty('')
     e_stop_active_str       = StringProperty('')
     run_button_color        = ListProperty([1, 1, 1, 1])
@@ -75,6 +77,7 @@ class Main(Screen):
         self.past_time = 0
         self.excel              = excel # create an instance of the excel module to save the data
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
+        self.scale              = Scale()          # create an instance of the scale sensor
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
@@ -170,7 +173,8 @@ class Main(Screen):
             'Torque': [],
             'Blade Tip Velocity': [],
             'Total Revolution': [],
-            'Notes': []
+            'Notes': [],
+            'Weight': []
         }
         return self.data
 
@@ -201,6 +205,7 @@ class Main(Screen):
             self.current_rpm_str = "0.0"
             self.blade_tip_velocity_str = "0.0"
             self.total_revolution_str = "0.0"
+            self.weight_str = "0.0"
             # if self.rpm_input == 0:
             #     self.is_rpm_input_valid = False
             self.seconds_counter = 0
@@ -351,6 +356,8 @@ class Main(Screen):
             self.data['Torque'].append(torque_data)
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
             self.data['Total Revolution'].append(self.total_revolution_str)
+            self.weight_str = str(self.scale.get_weight())
+            self.data['Weight'].append(self.weight_str)
 
             # # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
