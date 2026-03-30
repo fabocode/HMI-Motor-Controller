@@ -162,6 +162,10 @@ class Stepper_Motor:
     def get_rpm(self):
         freq = self.get_frequency()
         rpm = int((freq * 60.0)/1000)/10
+        # Clamp: reject readings more than 50% above target RPM (noise spikes)
+        target_rpm = (self._target_freq * 60.0) / self.__REVOLUTIONS
+        if target_rpm > 0 and rpm > target_rpm * 1.5:
+            return int(target_rpm)
         return rpm
 
     def ramp_to_rpm(self, rpm_input, ramp_time=1.0):

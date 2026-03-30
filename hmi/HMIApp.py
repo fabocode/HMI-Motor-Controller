@@ -98,7 +98,7 @@ class Main(Screen):
 
         self.toggle_motor_drive_fault = False
         self.toggle_e_stop_active = False
-        self.rpms = [0,0,0]
+        self.rpms = [0] * 5
         self.rpm_average = 0
         self.motor_drive_fault_lock = False
         self.e_stop_active_lock = False
@@ -294,7 +294,7 @@ class Main(Screen):
 
         self.rpms.insert(0, self.get_rpm())
         self.rpms.pop()
-        self.rpm_average = int(sum(self.rpms)/len(self.rpms))
+        self.rpm_average = int(sorted(self.rpms)[len(self.rpms) // 2])  # median filter
 
         if self.is_jogging and not self.is_system_running():
         # if self.is_jogging:
