@@ -100,6 +100,7 @@ class Main(Screen):
         self.toggle_e_stop_active = False
         self.rpms = [0] * 5
         self.rpm_average = 0
+        self.torques = [0.0] * 5
         self.motor_drive_fault_lock = False
         self.e_stop_active_lock = False
         self.pending_orientation_change = False
@@ -304,7 +305,9 @@ class Main(Screen):
         self.control_status_bar()   # update the status bar
 
         torque_data = self.stepper_motor.get_torque()   # get the torque data from the torque sensor
-        # self.torque_sensor_str = str(torque_data)
+        self.torques.insert(0, torque_data)
+        self.torques.pop()
+        torque_data = sorted(self.torques)[len(self.torques) // 2]  # median filter
         self.weight_str = str(self.scale.get_weight())  # update weight display (always, not just when running)
         self.now = datetime.today() # get the current time
         is_motor_fault_active = self.stepper_motor.is_drive_fault_active()
