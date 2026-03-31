@@ -96,7 +96,7 @@ class Stepper_Motor:
     def get_torque(self) -> float:
         try:
             adc_value = DAQC2.getADC(self.addr, self.torque_addr)
-            Nm = round(max(0, (adc_value - 4.926)) * (50.0 / 9.9), 4)  # 4.926V = 0 Nm at idle, 10V = 50 Nm (DYTN-101)
+            Nm = round(abs(adc_value - 4.926) * (50.0 / 9.9), 4)  # 4.926V = 0 Nm at idle, torque reads same in both directions
             return Nm
         except:
             print("Error: Torque sensor not connected")
