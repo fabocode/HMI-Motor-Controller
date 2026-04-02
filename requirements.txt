@@ -19,4 +19,3 @@ tendo==0.2.15
 urllib3==1.26.7
 XlsxWriter==3.0.2
 pyserial==3.5
-pyads

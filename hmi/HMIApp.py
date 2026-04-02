@@ -26,6 +26,7 @@ from timeit import default_timer as timer
 from HMIConfig import HMI_Config
 from sensors.stepper_motor import Stepper_Motor
 from sensors.scale import Scale
+from sensors.screw_feeder import ScrewFeeder
 import time
 import excel
 import re
@@ -78,6 +79,7 @@ class Main(Screen):
         self.excel              = excel # create an instance of the excel module to save the data
         self.stepper_motor      = Stepper_Motor() # create an instance of the stepper motor
         self.scale              = Scale()          # create an instance of the scale sensor
+        self.screw_feeder       = ScrewFeeder()    # create an instance of the screw feeder sensor
         Clock.schedule_interval(self.update_callback, 1)    # setup periodic task
         Clock.schedule_interval(self.update_callback_date, 300)    # setup periodic task
         self.counter = 0
@@ -175,7 +177,14 @@ class Main(Screen):
             'Blade Tip Velocity': [],
             'Total Revolution': [],
             'Notes': [],
-            'Weight': []
+            'Weight': [],
+            'Feeder Total Mass': [],
+            'Feeder Weight': [],
+            'Feeder Mass Flow': [],
+            'Feeder Motor Velocity': [],
+            'Feeder Motor Current': [],
+            'Feeder State': [],
+            'Feeder Mode': []
         }
         return self.data
 
@@ -360,6 +369,13 @@ class Main(Screen):
             self.data['Blade Tip Velocity'].append(self.blade_tip_velocity_str)   # TO DO: get the blade tip velocity from the stepper motor
             self.data['Total Revolution'].append(self.total_revolution_str)
             self.data['Weight'].append(self.weight_str)
+            self.data['Feeder Total Mass'].append(self.screw_feeder.get_total_mass())
+            self.data['Feeder Weight'].append(self.screw_feeder.get_weight())
+            self.data['Feeder Mass Flow'].append(self.screw_feeder.get_mass_flow())
+            self.data['Feeder Motor Velocity'].append(self.screw_feeder.get_motor_velocity())
+            self.data['Feeder Motor Current'].append(self.screw_feeder.get_motor_current())
+            self.data['Feeder State'].append(self.screw_feeder.get_state())
+            self.data['Feeder Mode'].append(self.screw_feeder.get_mode())
 
             # # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:
