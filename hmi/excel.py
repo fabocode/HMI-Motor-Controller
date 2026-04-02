@@ -30,12 +30,16 @@ def save_data(data, filename):
     worksheet.set_column('H:H', 20)
     worksheet.set_column('I:I', 20)
     worksheet.set_column('J:J', 20)
+    worksheet.set_column('K:K', 20)
+    worksheet.set_column('L:L', 20)
+    worksheet.set_column('M:M', 20)
+    worksheet.set_column('N:N', 20)
+    worksheet.set_column('O:O', 20)
+    worksheet.set_column('P:P', 20)
+    worksheet.set_column('Q:Q', 20)
 
     # Add a bold format to use to highlight cells.
     header_format = workbook.add_format({'bold': True, 'text_wrap': True, 'align': 'center', 'valign': 'vcenter'})
-
-    # Write some data headers.
-    worksheet.write('A1', 'Name', header_format)
 
     # Write some simple text.
     worksheet.write('A1', 'Start Time', header_format)
@@ -48,6 +52,13 @@ def save_data(data, filename):
     worksheet.write('H1', 'Total Revolution', header_format)
     worksheet.write('I1', 'Notes', header_format)
     worksheet.write('J1', 'Weight', header_format)
+    worksheet.write('K1', 'Feeder Total Mass', header_format)
+    worksheet.write('L1', 'Feeder Weight', header_format)
+    worksheet.write('M1', 'Feeder Mass Flow', header_format)
+    worksheet.write('N1', 'Feeder Motor Velocity', header_format)
+    worksheet.write('O1', 'Feeder Motor Current', header_format)
+    worksheet.write('P1', 'Feeder State', header_format)
+    worksheet.write('Q1', 'Feeder Mode', header_format)
 
     # write data dictionary into excel 
     row = 1

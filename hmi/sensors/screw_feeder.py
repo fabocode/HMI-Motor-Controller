@@ -1,12 +1,14 @@
-import pyads
+import requests
 import threading
 import time
+import xml.etree.ElementTree as ET
 
 
 class ScrewFeeder:
-    """Beckhoff TwinCAT 2 screw feeder read-only interface over ADS/TCP.
+    """Beckhoff TwinCAT 2 screw feeder read-only interface over OPC XML-DA.
 
-    Communicates with the PLC using the pyads library. A background daemon
+    Communicates with the PLC using the OPC XML-DA SOAP web service exposed
+    by TwinCAT at /UPnPDevice/TcPlcDataServiceDa.dll. A background daemon
     thread polls all configured variables every second and caches the latest
     readings. Call the get_*() methods from the UI thread — they return
     cached values instantly without blocking.
@@ -17,31 +19,48 @@ class ScrewFeeder:
         Subnet: 255.255.255.0
     """
 
-    AMS_NET_ID = '110.110.110.20.1.1'
-    AMS_PORT = pyads.PORT_TC2PLC1  # Port 801 for TwinCAT 2
+    OPC_URL = 'http://110.110.110.20/UPnPDevice/TcPlcDataServiceDa.dll'
 
-    # PLC variables to read — (symbol_name, plc_type)
+    # PLC variables to read (OPC XML-DA item names)
     # Derived from /TcWebVisu/feeder1.xml variable definitions
     VARIABLES = {
-        'total_mass':     ('MAIN.Feeder1.FeederStatus.TotalMass', pyads.PLCTYPE_REAL),
-        'weight':         ('MAIN.Feeder1.FeederStatus.Weight', pyads.PLCTYPE_REAL),
-        'mass_flow':      ('MAIN.Feeder1.FeederStatus.MassFlow', pyads.PLCTYPE_REAL),
-        'motor_velocity': ('MAIN.Feeder1.FeedingModule.ServoDrive.MotorVelocity', pyads.PLCTYPE_REAL),
-        'motor_current':  ('MAIN.Feeder1.FeedingModule.ServoDrive.MotorCurrent', pyads.PLCTYPE_INT),
-        'state':          ('MAIN.Feeder1.HmiLogic.CurrentStateStr', pyads.PLCTYPE_STRING),
-        'mode':           ('MAIN.Feeder1.HmiLogic.CurrentModeStr', pyads.PLCTYPE_STRING),
+        'total_mass':     'PLC1.MAIN.Feeder1.FeederStatus.TotalMass',
+        'weight':         'PLC1.MAIN.Feeder1.FeederStatus.Weight',
+        'mass_flow':      'PLC1.MAIN.Feeder1.FeederStatus.MassFlow',
+        'motor_velocity': 'PLC1.MAIN.Feeder1.FeedingModule.ServoDrive.MotorVelocity',
+        'motor_current':  'PLC1.MAIN.Feeder1.FeedingModule.ServoDrive.MotorCurrent',
+        'state':          'PLC1.MAIN.Feeder1.HmiLogic.CurrentStateStr',
+        'mode':           'PLC1.MAIN.Feeder1.HmiLogic.CurrentModeStr',
     }
 
-    _POLL_INTERVAL = 1.0        # seconds between polls
-    _RECONNECT_INTERVAL = 5.0   # seconds between reconnect attempts
+    _SOAP_TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:opc="http://opcfoundation.org/webservices/XMLDA/1.0/">
+  <soap:Body>
+    <opc:Read>
+      <opc:Options ReturnItemTime="true" ReturnItemName="true"/>
+      <opc:ItemList>{items}</opc:ItemList>
+    </opc:Read>
+  </soap:Body>
+</soap:Envelope>"""
 
-    def __init__(self, ams_net_id=None):
-        if ams_net_id:
-            self.AMS_NET_ID = ams_net_id
+    _SOAP_ITEM = '<opc:Items ItemName="{name}"/>'
 
-        self._plc = None
+    _HEADERS = {
+        'Content-Type': 'text/xml; charset=utf-8',
+        'SOAPAction': 'http://opcfoundation.org/webservices/XMLDA/1.0/Read',
+    }
+
+    _NS = {'ns1': 'http://opcfoundation.org/webservices/XMLDA/1.0/'}
+
+    _POLL_INTERVAL = 1.0
+    _REQUEST_TIMEOUT = 5.0
+
+    def __init__(self, opc_url=None):
+        if opc_url:
+            self.OPC_URL = opc_url
+
         self._connected = False
-        self._lock = threading.Lock()
 
         # Cached readings — defaults
         self._data = {
@@ -54,44 +73,56 @@ class ScrewFeeder:
             'mode': '',
         }
 
+        # Build the SOAP request body once (all items in one request)
+        items_xml = ''.join(
+            self._SOAP_ITEM.format(name=name)
+            for name in self.VARIABLES.values()
+        )
+        self._soap_body = self._SOAP_TEMPLATE.format(items=items_xml)
+
         self._running = True
         self._poll_thread = threading.Thread(target=self._poll_worker, daemon=True)
         self._poll_thread.start()
 
-    def _connect(self):
-        """Open ADS connection to the TwinCAT 2 PLC."""
-        try:
-            self._plc = pyads.Connection(self.AMS_NET_ID, self.AMS_PORT)
-            self._plc.open()
-            self._connected = True
-        except Exception:
-            self._connected = False
+    def _parse_response(self, xml_text):
+        """Parse OPC XML-DA Read response and return dict of item_name -> value."""
+        results = {}
+        root = ET.fromstring(xml_text)
+        for item in root.findall('.//ns1:Items', self._NS):
+            name = item.get('ItemName', '')
+            value_el = item.find('ns1:Value', self._NS)
+            if value_el is not None and value_el.text is not None:
+                xsi_type = value_el.get(
+                    '{http://www.w3.org/2001/XMLSchema-instance}type', ''
+                )
+                if 'float' in xsi_type or 'double' in xsi_type:
+                    results[name] = float(value_el.text)
+                elif 'int' in xsi_type or 'short' in xsi_type:
+                    results[name] = int(value_el.text)
+                else:
+                    results[name] = value_el.text
+        return results
 
     def _poll_worker(self):
-        """Background thread: reads all PLC variables, caches results."""
+        """Background thread: reads all PLC variables via HTTP, caches results."""
         while self._running:
-            if not self._connected:
-                self._connect()
-                if not self._connected:
-                    time.sleep(self._RECONNECT_INTERVAL)
-                    continue
-
             try:
-                # Read all variables in one batch
-                symbol_names = [v[0] for v in self.VARIABLES.values()]
-                plc_types = {v[0]: v[1] for v in self.VARIABLES.values()}
-                results = self._plc.read_list_by_name(symbol_names)
-
-                with self._lock:
-                    for key, (symbol, _) in self.VARIABLES.items():
-                        self._data[key] = results.get(symbol, self._data[key])
+                r = requests.post(
+                    self.OPC_URL,
+                    data=self._soap_body,
+                    headers=self._HEADERS,
+                    timeout=self._REQUEST_TIMEOUT,
+                )
+                if r.status_code == 200:
+                    results = self._parse_response(r.text)
+                    for key, item_name in self.VARIABLES.items():
+                        if item_name in results:
+                            self._data[key] = results[item_name]
+                    self._connected = True
+                else:
+                    self._connected = False
             except Exception:
                 self._connected = False
-                try:
-                    if self._plc:
-                        self._plc.close()
-                except Exception:
-                    pass
 
             time.sleep(self._POLL_INTERVAL)
 
@@ -126,14 +157,9 @@ class ScrewFeeder:
         return self._data['mode']
 
     def is_connected(self):
-        """Return True if ADS connection to PLC is active."""
+        """Return True if OPC XML-DA endpoint is responding."""
         return self._connected
 
     def close(self):
-        """Stop polling and close ADS connection."""
+        """Stop polling thread."""
         self._running = False
-        try:
-            if self._plc:
-                self._plc.close()
-        except Exception:
-            pass
