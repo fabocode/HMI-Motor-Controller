@@ -11,33 +11,70 @@ Prerequisites:
 import pyads
 import sys
 
-AMS_NET_ID = '110.110.110.20.1.1'
-AMS_PORT = pyads.PORT_TC2PLC1  # 801 for TwinCAT 2
+# --- Configuration ---
+LOCAL_AMS_NET_ID = '110.110.110.11.1.1'   # Pi's AMS Net ID
+PLC_AMS_NET_ID = '110.110.110.20.1.1'     # Feeder PLC's AMS Net ID
+PLC_IP = '110.110.110.20'
+AMS_PORT = pyads.PORT_TC2PLC1             # 801 for TwinCAT 2
 TEST_VARIABLE = 'MAIN.Feeder1.FeederStatus.Weight'
 
-print(f"Target AMS Net ID: {AMS_NET_ID}")
+# Default TwinCAT credentials (try these first)
+PLC_USERNAME = 'Administrator'
+PLC_PASSWORD = ''
+
+print(f"Local AMS Net ID:  {LOCAL_AMS_NET_ID}")
+print(f"Target AMS Net ID: {PLC_AMS_NET_ID}")
+print(f"Target IP:         {PLC_IP}")
 print(f"Target AMS Port:   {AMS_PORT}")
 print(f"Test variable:     {TEST_VARIABLE}")
 print()
 
-# Step 1: Try to connect
-print("[1] Opening ADS connection...")
+# Step 1: Open AMS port and set local address (required on Linux)
+print("[1] Setting up local AMS router...")
 try:
-    plc = pyads.Connection(AMS_NET_ID, AMS_PORT)
+    pyads.open_port()
+    pyads.set_local_address(LOCAL_AMS_NET_ID)
+    print(f"    OK - local AMS address set to {LOCAL_AMS_NET_ID}")
+except Exception as e:
+    print(f"    FAILED - {type(e).__name__}: {e}")
+    sys.exit(1)
+
+# Step 2: Try to add route to PLC from Pi side
+print(f"[2] Adding ADS route to PLC (user={PLC_USERNAME}, pass={'(blank)' if not PLC_PASSWORD else '***'})...")
+try:
+    pyads.add_route_to_plc(
+        LOCAL_AMS_NET_ID,
+        PLC_IP,
+        PLC_IP,
+        PLC_USERNAME,
+        PLC_PASSWORD,
+        route_name='RaspberryPi'
+    )
+    print("    OK - route added (or already exists)")
+except Exception as e:
+    print(f"    FAILED - {type(e).__name__}: {e}")
+    print()
+    print("    This likely means wrong credentials. Common options to try:")
+    print("      - Administrator / (blank)")
+    print("      - Administrator / 1")
+    print("      - Guest / (blank)")
+    print("    Ask the feeder guy for the TwinCAT login credentials.")
+    print()
+    print("    Continuing anyway in case a route already exists...")
+
+# Step 3: Try to connect
+print("[3] Opening ADS connection...")
+try:
+    plc = pyads.Connection(PLC_AMS_NET_ID, AMS_PORT)
     plc.open()
     print("    OK - connection opened")
 except Exception as e:
     print(f"    FAILED - {type(e).__name__}: {e}")
-    print()
-    print("Troubleshooting:")
-    print("  - Is pyads installed? (pip install pyads)")
-    print("  - Is the Pi on the same subnet as 110.110.110.20?")
-    print("  - Has an ADS route been added on the TwinCAT side?")
-    print("  - Is the AMS Net ID correct? Check TwinCAT System Manager.")
+    pyads.close_port()
     sys.exit(1)
 
-# Step 2: Check connection state
-print("[2] Checking ADS state...")
+# Step 4: Check connection state
+print("[4] Checking ADS state...")
 try:
     state = plc.read_state()
     print(f"    OK - ADS state: {state}")
@@ -45,27 +82,23 @@ except Exception as e:
     print(f"    FAILED - {type(e).__name__}: {e}")
     print()
     print("Troubleshooting:")
-    print("  - Connection opened but can't read state.")
-    print("  - The AMS Net ID may be wrong.")
-    print("  - An ADS route may be needed on the TwinCAT side.")
+    print("  - If timeout: route was not accepted, or AMS Net ID is wrong.")
+    print("  - Try different PLC credentials in step 2.")
+    print("  - The PLC's AMS Net ID might not be 110.110.110.20.1.1.")
     plc.close()
+    pyads.close_port()
     sys.exit(1)
 
-# Step 3: Try to read a single variable
-print(f"[3] Reading '{TEST_VARIABLE}'...")
+# Step 5: Try to read a single variable
+print(f"[5] Reading '{TEST_VARIABLE}'...")
 try:
     value = plc.read_by_name(TEST_VARIABLE, pyads.PLCTYPE_REAL)
     print(f"    OK - value: {value}")
 except Exception as e:
     print(f"    FAILED - {type(e).__name__}: {e}")
-    print()
-    print("Troubleshooting:")
-    print("  - Connection works but variable read failed.")
-    print("  - The variable name may have a typo or spaces.")
-    print("  - Try a different variable name.")
 
-# Step 4: Try reading a few more variables
-print("[4] Reading additional variables...")
+# Step 6: Try reading a few more variables
+print("[6] Reading additional variables...")
 test_vars = [
     ('MAIN.Feeder1.FeederStatus.TotalMass', pyads.PLCTYPE_REAL),
     ('MAIN.Feeder1.FeederStatus.MassFlow', pyads.PLCTYPE_REAL),
@@ -81,6 +114,7 @@ for name, plc_type in test_vars:
 
 # Cleanup
 print()
-print("[5] Closing connection...")
+print("[7] Closing connection...")
 plc.close()
+pyads.close_port()
 print("    Done.")
