@@ -107,6 +107,7 @@ class Main(Screen):
         self.e_stop_active_lock = False
         self.pending_orientation_change = False
         self.desired_orientation = "clockwise"
+        self._last_run_button_time = 0
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -192,6 +193,12 @@ class Main(Screen):
         self.data[label].append(data)
 
     def run_button_pressed(self):
+        # Debounce: reject spurious events from Kivy window focus restore
+        now = timer()
+        if now - self._last_run_button_time < 0.5:
+            return
+        self._last_run_button_time = now
+
         self.system_status = not self.system_status
         if self.system_status:
             self.run_button_str = 'STOP'
@@ -378,7 +385,7 @@ class Main(Screen):
             self.data['Feeder Mode'].append(self.screw_feeder.get_mode())
 
             # # update the RPM and blade tip velocity
-            if self.is_rpm_input_valid and not self.is_jogging:
+            if self.is_rpm_input_valid and not self.is_jogging and self.seconds_counter > 0:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
                 self.stepper_motor.ramp_to_rpm(self.rpm_input, ramp_time=2.0)
