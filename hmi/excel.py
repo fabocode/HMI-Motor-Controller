@@ -51,7 +51,7 @@ def save_data(data, filename):
     worksheet.write('G1', 'Blade Tip Velocity', header_format)
     worksheet.write('H1', 'Total Revolution', header_format)
     worksheet.write('I1', 'Notes', header_format)
-    worksheet.write('J1', 'Weight', header_format)
+    worksheet.write('J1', 'Outlet Scale Weight', header_format)
     worksheet.write('K1', 'Feeder Total Mass', header_format)
     worksheet.write('L1', 'Feeder Weight', header_format)
     worksheet.write('M1', 'Feeder Mass Flow', header_format)
