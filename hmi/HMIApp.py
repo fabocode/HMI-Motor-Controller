@@ -30,6 +30,17 @@ from sensors.screw_feeder import ScrewFeeder
 import time
 import excel
 import re
+import logging
+
+# Configure logging to file for motor diagnostics
+logging.basicConfig(
+    filename='/home/pcmm/Desktop/hmi_motor_debug.log',
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger('HMI')
+logger.info("=== HMI APPLICATION STARTED ===")
 
 # load the configuration file
 config = HMI_Config('config/hmi.yaml')
@@ -107,7 +118,6 @@ class Main(Screen):
         self.e_stop_active_lock = False
         self.pending_orientation_change = False
         self.desired_orientation = "clockwise"
-        self._last_run_button_time = 0
 
     def validate_name(self, filename):
         filename = re.sub(r'[^\w\s-]', '', filename.lower())
@@ -143,6 +153,7 @@ class Main(Screen):
 
     def on_set_rpm_input(self, text_input):
         ''' Event handler for the RPM input field '''
+        logger.info(f"EVENT on_set_rpm_input called with text='{text_input}'")
         # check if text input is valid number
         if text_input.isdigit():
 
@@ -150,6 +161,7 @@ class Main(Screen):
             if check:
                 self.rpm_input = round(float(text_input), 2)
                 self.is_rpm_input_valid = True
+                logger.info(f"  -> rpm_input={self.rpm_input}, is_rpm_input_valid=True")
 
     def on_notes_input(self, text_input):
         ''' Event handler for the notes input field '''
@@ -157,14 +169,18 @@ class Main(Screen):
 
     def on_start_jog(self):
         ''' Event handler for the start jog button '''
+        logger.info(f"EVENT on_start_jog called, system_running={self.system_status}")
         if not self.is_system_running():
             self.is_jogging = True
+            logger.info("  -> is_jogging=True")
 
     def on_stop_jog(self):
         ''' Event handler for the stop jog button '''
+        logger.info(f"EVENT on_stop_jog called, system_running={self.system_status}")
         if not self.is_system_running():
             self.stepper_motor.stop()
             self.is_jogging = False
+            logger.info("  -> stepper_motor.stop(), is_jogging=False")
 
     def clear_data(self):
         ''' Clear the data dictionary '''
@@ -193,12 +209,7 @@ class Main(Screen):
         self.data[label].append(data)
 
     def run_button_pressed(self):
-        # Debounce: reject spurious events from Kivy window focus restore
-        now = timer()
-        if now - self._last_run_button_time < 0.5:
-            return
-        self._last_run_button_time = now
-
+        logger.info(f"EVENT run_button_pressed called, system_status={self.system_status} -> toggling to {not self.system_status}")
         self.system_status = not self.system_status
         if self.system_status:
             self.run_button_str = 'STOP'
@@ -209,7 +220,11 @@ class Main(Screen):
             self.end_time_str = str("HH:MM:SS - M/D/Y")
             if self.rpm_input != 0:
                 self.is_rpm_input_valid = True
+                logger.info(f"  -> START: is_rpm_input_valid=True, rpm_input={self.rpm_input}")
+            else:
+                logger.info(f"  -> START: rpm_input=0, is_rpm_input_valid stays False")
         else:
+            logger.info("  -> STOP: saving data, stopping motor")
             # save the data to the excel file
             # save data into excel file and clear the data dictionary
             self.stepper_motor.stop()
@@ -285,8 +300,9 @@ class Main(Screen):
         # --- Emergency‑Stop Handling ---
         is_e_stop_active = self.stepper_motor.is_e_stop_active()
         if is_e_stop_active:
-            # first time we detect E‑stop: kill motor and flip UI back to “START”
+            # first time we detect E‑stop: kill motor and flip UI back to "START"
             if not self.e_stop_active_lock:
+                logger.warning("E-STOP DETECTED: stopping motor, setting system_status=False")
                 self.stepper_motor.stop()
                 self.system_status = False
                 self.is_running = False
@@ -297,11 +313,12 @@ class Main(Screen):
             self.e_stop_active_alarm()
             # force torque/RPM to zero
             self.torque_sensor_str = "0.0"
-            # skip the rest of the loop so we don’t inadvertently restart
+            # skip the rest of the loop so we don't inadvertently restart
             return
         else:
             # E‑stop has been released; clear lock but stay stopped
             if self.e_stop_active_lock:
+                logger.info("E-STOP RELEASED: clearing lock")
                 self.e_stop_active_lock = False
             # reset UI alarm bits
             self.toggle_e_stop_active = False
@@ -316,6 +333,7 @@ class Main(Screen):
         if self.is_jogging and not self.is_system_running():
         # if self.is_jogging:
             self.stepper_motor.jog()
+            logger.info(f"MOTOR JOG: is_jogging=True, system_running=False")
             print(f"jogging - system running {self.is_system_running()}")
 
         self.control_status_bar()   # update the status bar
@@ -385,10 +403,11 @@ class Main(Screen):
             self.data['Feeder Mode'].append(self.screw_feeder.get_mode())
 
             # # update the RPM and blade tip velocity
-            if self.is_rpm_input_valid and not self.is_jogging and self.seconds_counter > 0:
+            if self.is_rpm_input_valid and not self.is_jogging:
                 self.is_rpm_input_valid = False # reset the input flag
                 self.stepper_motor.start()
                 self.stepper_motor.ramp_to_rpm(self.rpm_input, ramp_time=2.0)
+                logger.warning(f"MOTOR START (rpm_input path): rpm_input={self.rpm_input}, seconds_counter={self.seconds_counter}")
                 print("start the motor here")
 
         elif not self.is_system_running() and not self.is_jogging:   # if system is stopped and not jogging
@@ -400,7 +419,7 @@ class Main(Screen):
             if self.is_system_running():
                 # Check if the motor has stopped (for example, motor_stopped flag or frequency near stop level).
                 # Here we check the frequency.
-                if abs(self.stepper_motor.freq - 10) > 0.1:  
+                if abs(self.stepper_motor.freq - 10) > 0.1:
                     # If motor has not fully stopped, issue a stop command with a shorter ramp time.
                     self.stepper_motor.stop(ramp_time=0.5)
                 else:
@@ -412,6 +431,7 @@ class Main(Screen):
                     # Restart the motor with the previous RPM using a faster ramp-up time.
                     self.stepper_motor.start()
                     self.stepper_motor.ramp_to_rpm(self.rpm_input, ramp_time=1.0)
+                    logger.warning(f"MOTOR START (orientation change): rpm_input={self.rpm_input}, desired={self.desired_orientation}")
                     # Clear the flag so this sequence is executed only once.
                     self.pending_orientation_change = False
             else:
@@ -427,11 +447,13 @@ class Main(Screen):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
     def toggle_pressed_button(self):
+        logger.info(f"EVENT toggle_pressed_button called (clockwise), system_running={self.system_status}")
         # Request a change to clockwise rotation.
         self.pending_orientation_change = True
         self.desired_orientation = "clockwise"
 
     def toggle_unpressed_button(self):
+        logger.info(f"EVENT toggle_unpressed_button called (counterclockwise), system_running={self.system_status}")
         # Request a change to counterclockwise rotation.
         self.pending_orientation_change = True
         self.desired_orientation = "counterclockwise"
@@ -457,4 +479,3 @@ if __name__ == '__main__':
         HMI_Motor().run()
     finally:
         HMI_Motor().on_stop()
-
