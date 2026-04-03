@@ -1,3 +1,2 @@
 #!/bin/bash
-cd /home/pcmm/HMI-Motor-Controller/hmi/ && /usr/local/bin/python3.7 HMIApp.py
-
+cd /home/pcmm/HMI-Motor-Controller/hmi/ && /home/pcmm/.venv/bin/python HMIApp.py
