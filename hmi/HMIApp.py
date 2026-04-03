@@ -20,7 +20,6 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty, BooleanProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
-from kivy.core.window import Window
 from screeninfo import get_monitors
 from datetime import date, datetime, timedelta
 from timeit import default_timer as timer
@@ -53,6 +52,10 @@ screen_height = str(int(get_monitors()[0].height * config.get_screen_fixed_size(
 Config.set('graphics', 'width', screen_width)
 Config.set('graphics', 'height', screen_height)
 Config.set('kivy', 'keyboard_mode', 'systemanddock')    # enable virtual keyboard on text input
+
+# Import Window AFTER Config.set calls — importing it earlier triggers window creation
+# and the Config settings above would be ignored
+from kivy.core.window import Window
 
 # main screen
 class Main(Screen):
