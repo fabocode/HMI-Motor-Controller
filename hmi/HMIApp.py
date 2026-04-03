@@ -20,6 +20,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, NumericProperty, StringProperty, BooleanProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
+from kivy.core.window import Window
 from screeninfo import get_monitors
 from datetime import date, datetime, timedelta
 from timeit import default_timer as timer
@@ -32,14 +33,17 @@ import excel
 import re
 import logging
 
-# Configure logging to file for motor diagnostics
-logging.basicConfig(
-    filename='/home/pcmm/Desktop/hmi_motor_debug.log',
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+# Configure logging to file for motor diagnostics (bypass Kivy's logger)
 logger = logging.getLogger('HMI')
+logger.setLevel(logging.INFO)
+_fh = logging.FileHandler('/home/pcmm/Desktop/hmi_motor_debug.log')
+_fh.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
+logger.addHandler(_fh)
+
+# Suppress verbose HTTP logs from requests/urllib3 (screw feeder polling)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
+logging.getLogger('requests').setLevel(logging.WARNING)
+
 logger.info("=== HMI APPLICATION STARTED ===")
 
 # load the configuration file
@@ -153,6 +157,8 @@ class Main(Screen):
 
     def on_set_rpm_input(self, text_input):
         ''' Event handler for the RPM input field '''
+        if not Window.focus:
+            return
         logger.info(f"EVENT on_set_rpm_input called with text='{text_input}'")
         # check if text input is valid number
         if text_input.isdigit():
@@ -169,6 +175,8 @@ class Main(Screen):
 
     def on_start_jog(self):
         ''' Event handler for the start jog button '''
+        if not Window.focus:
+            return
         logger.info(f"EVENT on_start_jog called, system_running={self.system_status}")
         if not self.is_system_running():
             self.is_jogging = True
@@ -209,6 +217,9 @@ class Main(Screen):
         self.data[label].append(data)
 
     def run_button_pressed(self):
+        if not Window.focus:
+            logger.info("EVENT run_button_pressed BLOCKED (window not focused)")
+            return
         logger.info(f"EVENT run_button_pressed called, system_status={self.system_status} -> toggling to {not self.system_status}")
         self.system_status = not self.system_status
         if self.system_status:
@@ -447,12 +458,16 @@ class Main(Screen):
         self.date_str = str(date.today().strftime("%d/%m/%y"))  # update the date string
 
     def toggle_pressed_button(self):
+        if not Window.focus:
+            return
         logger.info(f"EVENT toggle_pressed_button called (clockwise), system_running={self.system_status}")
         # Request a change to clockwise rotation.
         self.pending_orientation_change = True
         self.desired_orientation = "clockwise"
 
     def toggle_unpressed_button(self):
+        if not Window.focus:
+            return
         logger.info(f"EVENT toggle_unpressed_button called (counterclockwise), system_running={self.system_status}")
         # Request a change to counterclockwise rotation.
         self.pending_orientation_change = True
