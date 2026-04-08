@@ -211,8 +211,14 @@ class Main(Screen):
             'Feeder Mass Flow': [],
             'Feeder Motor Velocity': [],
             'Feeder Motor Current': [],
-            'Feeder State': [],
-            'Feeder Mode': []
+            'Feeder Current State': [],
+            'Feeder Current Mode': [],
+            'Feeder Gravimetric': [],
+            'Feeder HMI State Cmd': [],
+            'Feeder HMI Mode': [],
+            'Feeder Screw Velocity': [],
+            'Feeder Feed Factor': [],
+            'Feeder Massflow RSD': []
         }
         return self.data
 
@@ -413,8 +419,14 @@ class Main(Screen):
             self.data['Feeder Mass Flow'].append(self.screw_feeder.get_mass_flow())
             self.data['Feeder Motor Velocity'].append(self.screw_feeder.get_motor_velocity())
             self.data['Feeder Motor Current'].append(self.screw_feeder.get_motor_current())
-            self.data['Feeder State'].append(self.screw_feeder.get_state())
-            self.data['Feeder Mode'].append(self.screw_feeder.get_mode())
+            self.data['Feeder Current State'].append(self.screw_feeder.get_state())
+            self.data['Feeder Current Mode'].append(self.screw_feeder.get_mode())
+            self.data['Feeder Gravimetric'].append(self.screw_feeder.get_gravimetric())
+            self.data['Feeder HMI State Cmd'].append(self.screw_feeder.get_hmi_state_cmd())
+            self.data['Feeder HMI Mode'].append(self.screw_feeder.get_hmi_mode())
+            self.data['Feeder Screw Velocity'].append(self.screw_feeder.get_screw_velocity())
+            self.data['Feeder Feed Factor'].append(self.screw_feeder.get_feed_factor())
+            self.data['Feeder Massflow RSD'].append(self.screw_feeder.get_massflow_rsd())
 
             # # update the RPM and blade tip velocity
             if self.is_rpm_input_valid and not self.is_jogging:

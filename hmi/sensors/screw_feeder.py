@@ -31,6 +31,12 @@ class ScrewFeeder:
         'motor_current':  'PLC1.MAIN.Feeder1.FeedingModule.ServoDrive.MotorCurrent',
         'state':          'PLC1.MAIN.Feeder1.HmiLogic.CurrentStateStr',
         'mode':           'PLC1.MAIN.Feeder1.HmiLogic.CurrentModeStr',
+        'gravimetric':    'PLC1.MAIN.Feeder1.FeedingModule.Gravimetric',
+        'hmi_state_cmd':  'PLC1.MAIN.Feeder1.HmiLogic.HMIStateCmdStr',
+        'hmi_mode':       'PLC1.MAIN.Feeder1.HmiLogic.HMIModeStr',
+        'screw_velocity': 'PLC1.MAIN.Feeder1.FeederStatus.ScrewVelocity',
+        'feed_factor':    'PLC1.MAIN.Feeder1.FeederStatus.FeedFactorBarrelExit',
+        'massflow_rsd':   'PLC1.MAIN.Feeder1.FeederStatus.MassflowRSD',
     }
 
     _SOAP_TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
@@ -71,6 +77,12 @@ class ScrewFeeder:
             'motor_current': 0,
             'state': '',
             'mode': '',
+            'gravimetric': '',
+            'hmi_state_cmd': '',
+            'hmi_mode': '',
+            'screw_velocity': 0.0,
+            'feed_factor': 0.0,
+            'massflow_rsd': 0.0,
         }
 
         # Build the SOAP request body once (all items in one request)
@@ -155,6 +167,30 @@ class ScrewFeeder:
     def get_mode(self):
         """Return current feeder mode string (e.g., 'Feed')."""
         return self._data['mode']
+
+    def get_gravimetric(self):
+        """Return gravimetric mode status."""
+        return self._data['gravimetric']
+
+    def get_hmi_state_cmd(self):
+        """Return HMI state command string."""
+        return self._data['hmi_state_cmd']
+
+    def get_hmi_mode(self):
+        """Return HMI mode string."""
+        return self._data['hmi_mode']
+
+    def get_screw_velocity(self):
+        """Return screw velocity (float)."""
+        return self._data['screw_velocity']
+
+    def get_feed_factor(self):
+        """Return feed factor at barrel exit (float)."""
+        return self._data['feed_factor']
+
+    def get_massflow_rsd(self):
+        """Return mass flow RSD (float)."""
+        return self._data['massflow_rsd']
 
     def is_connected(self):
         """Return True if OPC XML-DA endpoint is responding."""

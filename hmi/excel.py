@@ -37,6 +37,12 @@ def save_data(data, filename):
     worksheet.set_column('O:O', 20)
     worksheet.set_column('P:P', 20)
     worksheet.set_column('Q:Q', 20)
+    worksheet.set_column('R:R', 20)
+    worksheet.set_column('S:S', 20)
+    worksheet.set_column('T:T', 20)
+    worksheet.set_column('U:U', 20)
+    worksheet.set_column('V:V', 20)
+    worksheet.set_column('W:W', 20)
 
     # Add a bold format to use to highlight cells.
     header_format = workbook.add_format({'bold': True, 'text_wrap': True, 'align': 'center', 'valign': 'vcenter'})
@@ -57,8 +63,14 @@ def save_data(data, filename):
     worksheet.write('M1', 'Feeder Mass Flow', header_format)
     worksheet.write('N1', 'Feeder Motor Velocity', header_format)
     worksheet.write('O1', 'Feeder Motor Current', header_format)
-    worksheet.write('P1', 'Feeder State', header_format)
-    worksheet.write('Q1', 'Feeder Mode', header_format)
+    worksheet.write('P1', 'Feeder Current State', header_format)
+    worksheet.write('Q1', 'Feeder Current Mode', header_format)
+    worksheet.write('R1', 'Feeder Gravimetric', header_format)
+    worksheet.write('S1', 'Feeder HMI State Cmd', header_format)
+    worksheet.write('T1', 'Feeder HMI Mode', header_format)
+    worksheet.write('U1', 'Feeder Screw Velocity', header_format)
+    worksheet.write('V1', 'Feeder Feed Factor', header_format)
+    worksheet.write('W1', 'Feeder Massflow RSD', header_format)
 
     # write data dictionary into excel 
     row = 1
