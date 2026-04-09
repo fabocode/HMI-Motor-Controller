@@ -168,7 +168,7 @@ WindowManager:
                 multiline: False
                 markup: True
                 font_size: 40
-                on_focus: self.text = "" if self.focus else "{}".format(self.text)
+                on_focus: root.on_notes_input(self.text) if not self.focus else None
                 on_text_validate: root.on_notes_input(self.text)
             BoxLayout:
                 orientation: "horizontal"
